@@ -7,6 +7,9 @@
 **Every PDF, image and document tool — in one keystroke, in your browser, even offline.**
 No sign‑up · No uploads · No limits · Free
 
+[![CI](https://github.com/Tirth-Babariya/playwithdoc/actions/workflows/ci.yml/badge.svg)](https://github.com/Tirth-Babariya/playwithdoc/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 [**Built by Tirth Babariya →**](https://github.com/Tirth-Babariya/)
 
 <br />
@@ -131,6 +134,15 @@ npm start              # serve the production build (service worker + CSP are pr
 
 Requires Node 20+. The service worker and security headers only run in **production** mode — use `npm run build && npm start` to try offline mode.
 
+## Tests
+
+Real‑browser end‑to‑end tests (Playwright) cover the features, offline mode and phone/tablet/desktop layouts. They run automatically on every push and pull request through GitHub Actions — see [`tests/e2e/README.md`](tests/e2e/README.md) to run them yourself.
+
+```bash
+npm run typecheck      # TypeScript
+npm run test:features  # after npm run build && npm start — see tests/e2e/README.md
+```
+
 ## Deploy to Vercel
 
 1. Push this project to a GitHub repository.
@@ -157,6 +169,12 @@ Everything is static, so it runs on Vercel's free tier with no server functions.
 ## On the roadmap
 
 Fillable PDF forms · Compare two PDFs · PDF ⇄ Excel · PDF/A · background‑thread processing for huge files
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Tirth Babariya. The site bundles open‑source engines that keep their own licenses — see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ---
 

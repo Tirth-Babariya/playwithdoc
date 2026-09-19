@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/build-sw.mjs",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test:features": "node tests/e2e/features.test.mjs",
+    "test:offline": "node tests/e2e/offline.test.mjs",
+    "test:devices": "node tests/e2e/devices.test.mjs"
   },
   "dependencies": {
     "@neslinesli93/qpdf-wasm": "^0.3.0",
@@ -21,6 +25,7 @@
     "@types/node": "^26.6.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "playwright-core": "^1.63.0",
     "typescript": "^7.0.2"
   },
   "engines": {

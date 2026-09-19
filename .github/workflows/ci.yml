@@ -1,0 +1,76 @@
+name: CI
+
+# Runs on every push to main and on every pull request, so a broken change is caught before Vercel publishes it.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Fast gate: TypeScript + a full production build (also generates the offline service worker).
+  check:
+    name: Type-check & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Type-check
+        run: npx tsc --noEmit
+      - name: Build
+        run: npm run build
+
+  # Real-browser tests against the production build. The three suites run in parallel.
+  e2e:
+    name: E2E · ${{ matrix.suite }}
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [features, offline, devices]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright-core install --with-deps chromium
+      - name: Build
+        run: npm run build
+      - name: Start the production server
+        run: |
+          nohup npx next start -p 3100 > server.log 2>&1 &
+          for i in $(seq 1 45); do
+            if curl -fsS http://localhost:3100/ > /dev/null; then echo "server is up"; exit 0; fi
+            sleep 2
+          done
+          echo "server did not start"; cat server.log; exit 1
+      - name: Run ${{ matrix.suite }} tests
+        run: node tests/e2e/${{ matrix.suite }}.test.mjs
+        env:
+          BASE_URL: http://localhost:3100
+      - name: Upload screenshots (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ matrix.suite }}-screenshots
+          path: tests/e2e/.out
+          if-no-files-found: ignore
+      - name: Server log (on failure)
+        if: failure()
+        run: cat server.log || true

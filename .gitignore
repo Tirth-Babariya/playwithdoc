@@ -7,3 +7,6 @@ next-env.d.ts
 public/sw.js
 .vercel
 .env*.local
+# e2e test output
+tests/e2e/.fixtures
+tests/e2e/.out
