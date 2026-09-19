@@ -136,7 +136,7 @@ if (r.files) {
   const z = await JSZip.loadAsync(fs.readFileSync(r.files[0]));
   const sheet = await z.file("xl/worksheets/sheet1.xml").async("string");
   const strings = z.file("xl/sharedStrings.xml") ? await z.file("xl/sharedStrings.xml").async("string") : "";
-  ok("spreadsheet contains the table text", /Item/.test(strings) && /Paper/.test(strings), strings.slice(0, 80));
+  ok("spreadsheet contains the table text", /Item/.test(sheet + strings) && /Paper/.test(sheet + strings), (sheet + strings).slice(0, 80));
   ok("numbers became real numbers (12, 1.5, 8.25)", /<v>12<\/v>/.test(sheet) && /<v>1\.5<\/v>/.test(sheet) && /<v>8\.25<\/v>/.test(sheet));
 } else ok("pdf-to-excel produced a file", false, r.error);
 
@@ -169,6 +169,39 @@ await openPalette(page);
 await page.keyboard.type("recipe");
 await page.waitForTimeout(300);
 ok("Ctrl+K finds Recipes", /Recipes/.test(await page.locator(".pal-item").first().innerText()));
+
+/* ───────── How-to guides ───────── */
+await page.goto(`${BASE}/guides`);
+ok("guides index lists all 16 guides", (await page.locator(".guide-card").count()) === 16, await page.locator(".guide-card").count());
+await page.goto(`${BASE}/guides/reduce-pdf-size-under-200kb`);
+ok("guide shows its 5 steps", (await page.locator(".guide-steps li").count()) === 5);
+ok("guide leads to the tool", (await page.locator(".guide-short a.btn").getAttribute("href")) === "/tools/compress-pdf");
+const ld = await page.locator('script[type="application/ld+json"]').first().innerText();
+ok("guide has HowTo structured data for search engines", /"@type":"HowTo"/.test(ld) && /"@type":"HowToStep"/.test(ld));
+await page.goto(`${BASE}/tools/compress-pdf`);
+ok("the tool page links to its guide", (await page.locator('a[href="/guides/reduce-pdf-size-under-200kb"]').count()) >= 1);
+
+/* ───────── Prove it ───────── */
+await page.goto(`${BASE}/prove-it`);
+await page.waitForSelector(".proof-tile");
+await hydrated(page, ".proof-demo button");
+const tiles = await page.locator(".proof-tile b").allInnerTexts();
+ok("prove-it: 0 requests to other websites, 0 carrying data", tiles[0] === "0" && tiles[1] === "0", tiles.join(","));
+await page.setInputFiles(".proof input[type=file]", abs("a.pdf"));
+await page.waitForSelector(".proof-result", { timeout: 15000 });
+const hash = await page.locator(".proof-result .mono").innerText();
+ok("prove-it: the file is fingerprinted (SHA-256) inside the tab", /^[0-9a-f]{64}$/.test(hash.trim()), hash.slice(0, 20));
+await page.getByRole("button", { name: /Try to send data to another site/ }).click();
+await page.waitForSelector(".good-alert, .proof-demo .alert.info", { timeout: 10000 });
+ok("prove-it: the browser blocks sending data to another site", (await page.locator(".good-alert").count()) === 1, (await page.locator(".proof-demo .alert").allInnerTexts()).join(" "));
+const after = await page.locator(".proof-tile b").allInnerTexts();
+ok("prove-it: the upload counter is still 0 afterwards", after[0] === "0" && after[1] === "0", after.join(","));
+await page.goto(BASE + "/");
+ok("the home page privacy pill links to the proof", (await page.locator("a.pill-link").getAttribute("href")) === "/prove-it");
+await openPalette(page);
+await page.keyboard.type("prove");
+await page.waitForTimeout(300);
+ok("Ctrl+K finds the Prove it page", /Prove it/.test(await page.locator(".pal-item").first().innerText()));
 
 console.log(`\n${results.filter(Boolean).length}/${results.length} passed`, errors.length ? errors.slice(0, 5) : "");
 await browser.close();

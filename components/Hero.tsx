@@ -39,7 +39,7 @@ export function Hero() {
     <section className="hero">
       <div className="hero-bg" aria-hidden />
       <div className="container hero-in">
-        <div className="pill"><span className="dot" /> Free forever · No sign-up · Files never leave your device</div>
+        <Link href="/prove-it" className="pill pill-link"><span className="dot" /> Free forever · No sign-up · Files never leave your device <b>Prove it <Icon name="arrow" size={12} /></b></Link>
         <h1>Every file format,<br /><span className="grad">one keystroke away.</span></h1>
         <p className="lead">Merge, split, compress and convert PDFs, Word, Excel and images — right in your browser. Press <kbd>{mod}</kbd><kbd>K</kbd>, type what you want, hit enter. Done.</p>
 

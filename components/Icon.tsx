@@ -72,7 +72,7 @@ const SLUG_ICON: Record<string, string> = {
   "scan-to-pdf": "camera", "compress-pdf": "minimize", "repair-pdf": "wrench", "word-to-pdf": "file", "excel-to-pdf": "table",
   "html-to-pdf": "code", "txt-to-pdf": "file", "pdf-to-word": "file", "pdf-to-text": "file", "pdf-to-markdown": "hash",
   "rotate-pdf": "rotate", "add-page-numbers": "hash", "add-watermark": "drop", "crop-pdf": "crop",
-  "photo-resizer": "crop", "passport-photo": "user", "us-visa-photo": "user", "signature-resizer": "signature", "profile-picture": "user", "fill-pdf-form": "edit", "compare-pdf": "swap", "pdf-to-excel": "table", "recipes": "link", "ocr-pdf": "sparkle", "ocr-to-text": "sparkle", "protect-pdf": "lock", "unlock-pdf": "lock", "sign-pdf": "signature", "edit-pdf": "edit", "redact-pdf": "redact", "pptx-to-pdf": "file", "pdf-to-pptx": "file",
+  "photo-resizer": "crop", "passport-photo": "user", "us-visa-photo": "user", "signature-resizer": "signature", "profile-picture": "user", "fill-pdf-form": "edit", "compare-pdf": "swap", "pdf-to-excel": "table", "recipes": "link", "guides": "file", "prove-it": "shield", "ocr-pdf": "sparkle", "ocr-to-text": "sparkle", "protect-pdf": "lock", "unlock-pdf": "lock", "sign-pdf": "signature", "edit-pdf": "edit", "redact-pdf": "redact", "pptx-to-pdf": "file", "pdf-to-pptx": "file",
   "compress-image": "minimize", "resize-image": "resize", "csv-to-json": "code", "json-to-csv": "table", "excel-to-csv": "table", "excel-to-json": "code",
 };
 

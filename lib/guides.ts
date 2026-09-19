@@ -1,0 +1,438 @@
+/** How-to guides — one per popular tool. Each answers a search people actually make and ends at the tool. */
+export type Guide = {
+  slug: string;
+  /** Tool the guide leads to. */
+  tool: string;
+  title: string;
+  description: string;
+  minutes: number;
+  intro: string;
+  /** One-paragraph answer shown at the top. */
+  short: string;
+  steps: { title: string; body: string }[];
+  tips: string[];
+  faq: { q: string; a: string }[];
+  related: string[];
+};
+
+const PRIVATE_Q = { q: "Is my file uploaded anywhere?", a: "No. Everything happens inside your browser, on your own device. The site even tells your browser to refuse connections to other websites, and the “0 uploads” badge on every tool page shows it. You can check it yourself on the Prove it page." };
+
+export const GUIDES: Guide[] = [
+  {
+    slug: "reduce-pdf-size-under-200kb",
+    tool: "compress-pdf",
+    title: "How to reduce a PDF to under 200 KB",
+    description: "Shrink a PDF to a target size like 200 KB, 500 KB or 1 MB, free and without uploading it. Step-by-step with tips for when it won’t get small enough.",
+    minutes: 2,
+    intro: "Job portals, government forms and email systems often reject PDFs over a size limit. PlayWithDoc can keep shrinking your PDF until it fits under the limit you choose — and it does the work on your own device, so private documents stay private.",
+    short: "Open Compress PDF, add your file, set “Target size” to Under 200 KB, keep the Balanced level, press Compress, then download the result.",
+    steps: [
+      { title: "Open Compress PDF and add your file", body: "Drag the PDF onto the page, click browse, or paste it with Ctrl/⌘+V. It’s read by your browser and never uploaded." },
+      { title: "Pick how hard to compress", body: "Balanced suits most files. Smallest squeezes further. Lossless keeps the text selectable but saves less." },
+      { title: "Set a target size", body: "Under “Target size”, choose Under 200 KB (there are also 500 KB, 1 MB, 2 MB and 5 MB). The tool lowers the quality step by step until the file fits." },
+      { title: "Compress and check the result", body: "You’ll see the before and after sizes and a preview of the pages. If it couldn’t reach your target, the message tells you the smallest size it managed." },
+      { title: "Download", body: "Rename the file if you like, then download it. Ctrl/⌘+Enter downloads too." },
+    ],
+    tips: [
+      "Scans and photo-heavy PDFs shrink the most. Text-only PDFs are often small already.",
+      "Balanced and Smallest turn pages into images, so the text can’t be selected afterwards. Need selectable text? Use Lossless, or run OCR PDF on the result to make it searchable again.",
+      "Still too big? Remove pages you don’t need with Remove pages, or split the file into parts with Split PDF.",
+      "If the PDF also needs a signature or a password, compress it first and sign or protect it afterwards.",
+    ],
+    faq: [
+      { q: "Will the quality drop?", a: "A little — that is how compression works. Balanced keeps text readable. Use the page preview on the result screen to check before you download." },
+      { q: "It says it couldn’t reach my target. What now?", a: "Try the Smallest level, remove pages you don’t need, or split the document into two files. The message shows the smallest size it could reach." },
+      PRIVATE_Q,
+    ],
+    related: ["compress-image-to-100kb", "merge-pdf-files", "make-a-scanned-pdf-searchable"],
+  },
+  {
+    slug: "sign-a-pdf-without-uploading-it",
+    tool: "sign-pdf",
+    title: "How to sign a PDF without uploading it",
+    description: "Draw, type or upload your signature and place it on a PDF right in your browser. Nothing is uploaded, no account needed.",
+    minutes: 3,
+    intro: "Most online signing sites make you upload the document and create an account. With PlayWithDoc the PDF and your signature stay on your device from start to finish.",
+    short: "Open Sign PDF, add your PDF, click Signature to draw, type or upload it, drag it into place, add the date if you like, then save the signed PDF.",
+    steps: [
+      { title: "Open Sign PDF and add the document", body: "Drop the PDF on the page. You’ll see it as a large page you can work on, with a toolbar above it." },
+      { title: "Create your signature", body: "Click Signature. Draw it with a mouse, finger or stylus, type your name in a handwriting style, or upload a photo of your signature on white paper." },
+      { title: "Place and resize it", body: "Your signature appears on the page. Drag it where it belongs and pull the corner handle to resize. Use Prev/Next to move to another page." },
+      { title: "Add the date or a line of text", body: "Click Date to stamp today’s date, or use the Text tool to type a name, place or initials." },
+      { title: "Save and download", body: "Press Save signed PDF, then download. The original file is untouched." },
+    ],
+    tips: [
+      "Tick “Remember on this device” to reuse your signature next time. It’s stored only in your browser, and you can remove it from the signature window.",
+      "For the cleanest upload, sign on plain white paper in good light. Then use Signature resizer if a form wants a small signature file.",
+      "Zoom your browser in (Ctrl/⌘ and +) if you want to position the signature very precisely.",
+      "This places an image of your signature, which is an ordinary electronic signature. It is not a certificate-based digital signature, so if a process specifically requires one, use the tool it names.",
+    ],
+    faq: [
+      { q: "Is this legally binding?", a: "Rules vary by country and document type. A signature image is accepted in many everyday situations, but some documents require a certified digital signature or a witness. Check what the recipient requires." },
+      { q: "Can I sign several pages?", a: "Yes. Place a signature or initials on one page, move to the next page with Next, and add another." },
+      PRIVATE_Q,
+    ],
+    related: ["fill-a-pdf-form-online", "password-protect-a-pdf", "signature-under-20kb"],
+  },
+  {
+    slug: "convert-jpg-to-pdf",
+    tool: "jpg-to-pdf",
+    title: "How to convert JPG photos to a PDF (in the right order)",
+    description: "Turn one or many JPG photos into a single PDF. Reorder, rotate, and choose the page size — free, in your browser.",
+    minutes: 2,
+    intro: "Whether it’s a receipt, a scanned form or a set of phone photos, a PDF is easier to send and print. Here’s how to combine photos into one tidy document.",
+    short: "Open JPG to PDF, add your photos, drag them into order, rotate any that are sideways, choose the page size, and press Convert to PDF.",
+    steps: [
+      { title: "Open JPG to PDF and add your photos", body: "Select several at once, or add more later with the Add more button. On a phone you can choose from your gallery." },
+      { title: "Put them in order", body: "Drag the cards to reorder them — they slide out of the way as you drag. On a phone use the arrow buttons, or press Sort A–Z to order by file name." },
+      { title: "Fix sideways photos", body: "Hover a card (or look at its corner on a phone) and press the rotate button. Rotate all turns every photo at once." },
+      { title: "Choose the page", body: "Pick A4 or US Letter, or “Fit to image” so each page matches its photo exactly. Set orientation and margin if you want." },
+      { title: "Convert and download", body: "Press Convert to PDF. You’ll see a preview of every page before you download." },
+    ],
+    tips: [
+      "Click any card to see the photo full screen and check it’s the right one.",
+      "Have PNG or iPhone HEIC photos too? Use Image to PDF to mix formats in one document.",
+      "Large photos make a large PDF. Run Compress PDF afterwards if you need to email it.",
+    ],
+    faq: [
+      { q: "How many photos can I combine?", a: "As many as your device’s memory allows. Dozens of phone photos are fine on a modern phone or computer." },
+      { q: "Will the quality be reduced?", a: "JPG photos are embedded as they are, without re-compressing, unless a photo needs rotating, in which case it is re-saved at high quality." },
+      PRIVATE_Q,
+    ],
+    related: ["reduce-pdf-size-under-200kb", "merge-pdf-files", "convert-heic-to-jpg"],
+  },
+  {
+    slug: "merge-pdf-files",
+    tool: "merge-pdf",
+    title: "How to merge PDF files into one",
+    description: "Combine several PDFs into a single document in the order you choose. Free, private, and no page limits.",
+    minutes: 2,
+    intro: "Combining PDFs shouldn’t mean uploading contracts to a stranger’s server. Merge them right here, on your own device.",
+    short: "Open Merge PDF, add two or more PDFs, drag them into order, press Merge PDF, and download the combined file.",
+    steps: [
+      { title: "Add your PDFs", body: "Drop two or more PDFs on the page or choose them with browse. You’ll see the first page of each as a card." },
+      { title: "Set the order", body: "Drag cards to reorder, use the arrows on a phone, or press Sort A–Z if your files are named 01, 02, 03…" },
+      { title: "Check them", body: "Click a card to view the first page full screen, so you’re sure you’ve got the right files." },
+      { title: "Merge", body: "Press Merge PDF. You’ll get one PDF and a preview of its pages." },
+      { title: "Download or keep going", body: "Download it, or use “Keep going” to send the merged file straight into Compress PDF or Sign PDF without saving it first." },
+    ],
+    tips: [
+      "Only need some pages from a file? Use Extract pages first, then merge.",
+      "A password-protected PDF must be unlocked first with Unlock PDF.",
+      "Want to do it all in one go — merge, compress and protect? Build a Recipe.",
+    ],
+    faq: [
+      { q: "Is there a limit on files or pages?", a: "No limit besides your device’s memory." },
+      { q: "Do bookmarks and links survive?", a: "Page content is kept as it is. Bookmarks (the document outline) are not carried over, and links that point to other pages of the original file may stop working." },
+      PRIVATE_Q,
+    ],
+    related: ["split-a-pdf", "reduce-pdf-size-under-200kb", "password-protect-a-pdf"],
+  },
+  {
+    slug: "passport-photo-under-200kb",
+    tool: "passport-photo",
+    title: "How to make a passport photo at home (35×45 mm, under 200 KB)",
+    description: "Turn a phone photo into a correctly sized passport photo: 35×45 mm (413×531 px) and under 200 KB. Free, with framing guides.",
+    minutes: 4,
+    intro: "Online applications often want a digital passport photo at an exact size and under a file-size limit. This guide gets you a correctly sized file from an ordinary phone photo.",
+    short: "Take a well-lit photo against a plain background, open the Passport photo maker, add it, line up your face with the oval guide, and save. You get a 413×531 px JPG under 200 KB.",
+    steps: [
+      { title: "Take a good photo first", body: "Use a plain, light background, soft even light on your face (no harsh shadows), and look straight at the camera. Ask someone to take it from about an arm’s length away." },
+      { title: "Open the Passport photo maker", body: "Add your photo. iPhone HEIC photos work too." },
+      { title: "Frame your face", body: "Drag the photo inside the frame and zoom with the slider or your mouse wheel. Use the oval and the horizontal line as guides: your face should fill most of the oval, with your eyes near the line." },
+      { title: "Save it", body: "Press Save my photo. The tool sets 413×531 pixels (35×45 mm at 300 dpi) and lowers the quality just enough to stay under 200 KB." },
+      { title: "Check the requirements", body: "Compare the result with the official rules for your application — countries differ on background colour, head size and expression." },
+    ],
+    tips: [
+      "“Fit whole photo” shows all of your picture with white borders if you need extra space around your head.",
+      "Need the square 2×2 inch US format? Use the US visa / passport photo tool. Other sizes are in the Photo & signature resizer.",
+      "This helps with sizing and file size. It can’t promise a specific authority will accept the photo, so always check their rules.",
+    ],
+    faq: [
+      { q: "What size is a passport photo in pixels?", a: "35×45 mm at 300 dpi is 413×531 pixels, which is what this tool produces." },
+      { q: "Can I print it too?", a: "The file is meant for online upload. For printing, use a print service with the same physical size, or place several copies on a page." },
+      PRIVATE_Q,
+    ],
+    related: ["signature-under-20kb", "compress-image-to-100kb", "convert-heic-to-jpg"],
+  },
+  {
+    slug: "signature-under-20kb",
+    tool: "signature-resizer",
+    title: "How to make a signature image under 20 KB",
+    description: "Turn a photo of your signature into a clean 140×60 px image under 20 KB for online forms — free and private.",
+    minutes: 3,
+    intro: "Many application forms ask for a scanned signature that is tiny — often under 20 KB. Here’s how to make one from a photo taken with your phone.",
+    short: "Sign on white paper, photograph it, open Signature resizer, add the photo, frame your signature, keep “Whiten paper” on, and save a 140×60 px file under 20 KB.",
+    steps: [
+      { title: "Sign on plain white paper", body: "Use a dark pen and sign inside a clear area. Take the photo in good light so there are no shadows across the paper." },
+      { title: "Open Signature resizer and add the photo", body: "Choose 140×60 px (under 20 KB) or the larger 300×100 px (under 30 KB) depending on what your form asks for." },
+      { title: "Frame the signature", body: "Drag and zoom so your signature fills the frame without touching the edges." },
+      { title: "Keep “Whiten paper” on", body: "It turns the paper white and the ink dark, which also makes the file smaller and crisper." },
+      { title: "Save and check", body: "Press Save my photo. The result page shows the exact size. Upload it to the form." },
+    ],
+    tips: [
+      "Sign a little larger than you normally would — details vanish when the image is shrunk.",
+      "A different size? Choose Custom in the Photo & signature resizer and set your own width, height and limit.",
+      "If you only need to draw a signature on a PDF, use Sign PDF instead.",
+    ],
+    faq: [
+      { q: "Why is my file still over the limit?", a: "It shouldn’t be — the tool keeps lowering quality until it fits. If it says it can’t, use the smaller size or a simpler, bolder signature." },
+      PRIVATE_Q,
+    ],
+    related: ["passport-photo-under-200kb", "sign-a-pdf-without-uploading-it", "compress-image-to-100kb"],
+  },
+  {
+    slug: "convert-heic-to-jpg",
+    tool: "heic-to-jpg",
+    title: "How to convert iPhone HEIC photos to JPG",
+    description: "Convert HEIC photos from an iPhone to JPG that opens everywhere — in bulk, free, and without uploading them.",
+    minutes: 1,
+    intro: "iPhones save photos as HEIC, which many websites, printers and Windows apps can’t open. Converting to JPG makes them work everywhere.",
+    short: "Open HEIC to JPG, drop your photos, and download the JPGs (as a ZIP if you added several).",
+    steps: [
+      { title: "Open HEIC to JPG", body: "Add your photos. You can select the whole batch at once." },
+      { title: "Let it convert", body: "Conversion starts on its own, so there’s nothing to set. If you want smaller files, use Adjust settings on the result screen to lower the quality and run it again." },
+      { title: "Preview", body: "Each photo appears as a card so you can confirm they look right." },
+      { title: "Download", body: "One photo downloads directly. Several download as a single ZIP." },
+    ],
+    tips: [
+      "To stop your iPhone saving HEIC in future: Settings → Camera → Formats → Most Compatible.",
+      "Need the photos in a PDF? Use HEIC to PDF. Need them smaller? Compress image.",
+      "Big batches are handled on your device, so very large ones can take a moment on an older phone.",
+    ],
+    faq: [
+      { q: "Do I lose quality?", a: "JPG is a lossy format, so it’s slightly different from HEIC, but at the default quality the difference is very hard to see." },
+      PRIVATE_Q,
+    ],
+    related: ["convert-jpg-to-pdf", "compress-image-to-100kb", "passport-photo-under-200kb"],
+  },
+  {
+    slug: "make-a-scanned-pdf-searchable",
+    tool: "ocr-pdf",
+    title: "How to make a scanned PDF searchable (OCR)",
+    description: "Add a searchable, selectable text layer to a scanned PDF with OCR, free and on your own device — no upload.",
+    minutes: 3,
+    intro: "A scanned PDF is just pictures of pages, so you can’t search or copy it. OCR reads the text in those pictures and adds it back invisibly, so the pages look identical but become searchable.",
+    short: "Open OCR PDF, add your scan, pick the document’s language, press OCR PDF, and download the searchable copy.",
+    steps: [
+      { title: "Open OCR PDF and add your scan", body: "You can also add photos of pages (JPG, PNG or WebP)." },
+      { title: "Choose the language", body: "Pick the language the document is written in. Latin-script languages are available for the searchable PDF." },
+      { title: "Run it", body: "Recognition takes a little time — longer for many pages. You’ll see progress page by page." },
+      { title: "Check and download", body: "The pages look exactly the same. Open the result and try selecting or searching some text." },
+    ],
+    tips: [
+      "Sharper scans read better. 300 dpi is ideal; avoid shadows and skewed pages.",
+      "Only want the text, or a language such as Hindi or Arabic? Use Scan to Text (OCR), which supports nine languages.",
+      "OCR can misread poor scans, so proofread anything important.",
+      "Afterwards, shrink the file with Compress PDF using the Lossless level to keep the text layer.",
+    ],
+    faq: [
+      { q: "Does it work offline?", a: "Yes, once you have downloaded the OCR pack from the “Offline ready” menu, or after you’ve used OCR once." },
+      { q: "Will it change how my pages look?", a: "No. The text is added as an invisible layer on top of the original pages." },
+      PRIVATE_Q,
+    ],
+    related: ["reduce-pdf-size-under-200kb", "convert-pdf-to-excel", "redact-a-pdf-permanently"],
+  },
+  {
+    slug: "password-protect-a-pdf",
+    tool: "protect-pdf",
+    title: "How to password-protect a PDF",
+    description: "Lock a PDF with a password using AES-256 encryption, and choose whether people can print, copy or edit it. Free and private.",
+    minutes: 2,
+    intro: "Before you email a contract or an ID document, a password stops anyone else who gets the file from opening it. The encryption happens on your device, so the unprotected file is never uploaded.",
+    short: "Open Protect PDF, add your file, type a password, choose what people may do, and press Protect PDF.",
+    steps: [
+      { title: "Open Protect PDF and add your file", body: "You can protect several PDFs at once with the same password." },
+      { title: "Choose a password", body: "Use at least four characters — longer is much safer. A short phrase you can remember works well." },
+      { title: "Choose the permissions", body: "Decide whether printing, copying text and editing are allowed." },
+      { title: "Protect and download", body: "The file is encrypted with AES-256. Send the password separately, ideally by a different channel." },
+    ],
+    tips: [
+      "There is no way to recover a forgotten password, so keep it somewhere safe.",
+      "Need to open a PDF you protected earlier? Use Unlock PDF with the password.",
+      "Blocking copying and editing is a courtesy rather than a guarantee — the password to open the file is what really protects it.",
+    ],
+    faq: [
+      { q: "How strong is the protection?", a: "AES-256, the same standard used widely for document encryption. Strength depends most on how long and unpredictable your password is." },
+      PRIVATE_Q,
+    ],
+    related: ["sign-a-pdf-without-uploading-it", "redact-a-pdf-permanently", "merge-pdf-files"],
+  },
+  {
+    slug: "fill-a-pdf-form-online",
+    tool: "fill-pdf-form",
+    title: "How to fill in a PDF form online",
+    description: "Fill in fillable PDF forms — text boxes, check boxes and drop-downs — in your browser and save the result. Free and private.",
+    minutes: 3,
+    intro: "Applications, tax forms and questionnaires are often fillable PDFs. You can complete them here without installing anything and without sending the form anywhere.",
+    short: "Open Fill PDF form, add the form, type in the fields, tick boxes and choose options, then press Save filled PDF.",
+    steps: [
+      { title: "Open Fill PDF form and add the PDF", body: "The tool finds every fillable field and lists them, grouped by page." },
+      { title: "Fill in the fields", body: "Type in text boxes, tick check boxes and pick from drop-downs. Use the search box to jump to a field, and watch the progress bar." },
+      { title: "Choose how to save", body: "“Keep editable” lets you change the answers later. “Lock in place” turns them into fixed text — good before sending the form on." },
+      { title: "Save and download", body: "Press Save filled PDF and download. Only fields you changed are written." },
+    ],
+    tips: [
+      "No fields listed? The PDF is flat (just a picture of a form). Open it in Edit PDF to type straight onto the page.",
+      "Need to sign it too? Fill it here, then continue into Sign PDF using the “Keep going” shortcut.",
+      "Some forms use special fonts; if a character can’t be shown you’ll be told which field was skipped.",
+    ],
+    faq: [
+      { q: "Can I fill a scanned form?", a: "A scan has no fields, so use Edit PDF to place text on top of it." },
+      PRIVATE_Q,
+    ],
+    related: ["sign-a-pdf-without-uploading-it", "password-protect-a-pdf", "reduce-pdf-size-under-200kb"],
+  },
+  {
+    slug: "compare-two-pdf-versions",
+    tool: "compare-pdf",
+    title: "How to compare two versions of a PDF",
+    description: "See exactly what changed between two PDFs, with changes marked in red and a list of added and removed words. Free and private.",
+    minutes: 2,
+    intro: "When a contract or report comes back “with a few small changes”, you need to see them all. Compare puts the two versions side by side and marks the differences.",
+    short: "Open Compare PDFs, add the original (A) then the new version (B), press Compare, and open the report to see the changes in red.",
+    steps: [
+      { title: "Add the original first", body: "Add two PDFs. The first card is A (original), the second is B (new). Drag the cards to swap them." },
+      { title: "Run the comparison", body: "Press Compare. Each page is checked visually and its text is compared word by word." },
+      { title: "Read the report", body: "You’ll get a PDF with a summary, and for each changed page: A, B and a picture with the changes in red, plus the words added and removed." },
+      { title: "Download the details", body: "A text file lists every added and removed word per page, handy for pasting into an email." },
+    ],
+    tips: [
+      "It works best on text documents. Scanned files are compared by how the pages look because they contain no text.",
+      "If two files look identical the summary says so — useful for checking you have the final version.",
+    ],
+    faq: [
+      { q: "What if the files have different numbers of pages?", a: "Extra pages are reported as changes, with the missing side shown as an empty page." },
+      PRIVATE_Q,
+    ],
+    related: ["merge-pdf-files", "make-a-scanned-pdf-searchable", "split-a-pdf"],
+  },
+  {
+    slug: "redact-a-pdf-permanently",
+    tool: "redact-pdf",
+    title: "How to redact a PDF permanently",
+    description: "Black out names, numbers and other sensitive details so the text is truly removed, not just covered. Free and private.",
+    minutes: 3,
+    intro: "Drawing a black box over text in most editors leaves the words underneath — anyone can copy them out. Real redaction removes them. This tool does that by flattening the page.",
+    short: "Open Redact PDF, draw boxes over anything sensitive, press Redact & save. Redacted pages are turned into images, so the covered text is gone for good.",
+    steps: [
+      { title: "Open Redact PDF and add the document", body: "Pages appear large enough to work on accurately." },
+      { title: "Draw boxes over sensitive content", body: "With the Redact tool active, drag over names, numbers or paragraphs. Use Prev/Next for other pages, and Undo if you slip." },
+      { title: "Double-check every box", body: "Zoom in and make sure nothing sensitive peeks out from the edges of a box." },
+      { title: "Redact and save", body: "Press Redact & save. Pages with redactions are flattened into images, so the text underneath can’t be selected or recovered." },
+      { title: "Verify", body: "Open the result and try selecting the redacted area. Nothing should be selectable." },
+    ],
+    tips: [
+      "Because flattened pages become images, those pages lose selectable text. Pages without redactions stay as they were.",
+      "Keep the original file safe somewhere private. The redacted copy is what you share.",
+      "Metadata such as the author name lives outside the pages, so check the document properties too if that matters.",
+    ],
+    faq: [
+      { q: "How is this different from a black rectangle?", a: "A drawn rectangle only covers the text. Redaction flattens the page so the hidden text no longer exists in the file." },
+      PRIVATE_Q,
+    ],
+    related: ["password-protect-a-pdf", "sign-a-pdf-without-uploading-it", "make-a-scanned-pdf-searchable"],
+  },
+  {
+    slug: "convert-word-to-pdf",
+    tool: "word-to-pdf",
+    title: "How to convert a Word document to PDF",
+    description: "Convert a .docx Word document to PDF without Microsoft Office and without uploading it. Headings, lists, tables and images are kept.",
+    minutes: 1,
+    intro: "You don’t need Word installed to turn a document into a PDF. Drop the file here and it converts on your device.",
+    short: "Open Word to PDF, drop your .docx file, and download the PDF. It starts automatically.",
+    steps: [
+      { title: "Open Word to PDF and add your .docx", body: "Older .doc files need to be re-saved as .docx in Word first." },
+      { title: "Let it convert", body: "The conversion starts as soon as the file is added and shows a preview of the pages when it’s done." },
+      { title: "Change the page if you need to", body: "Use Adjust settings to switch between A4 and US Letter or change the margins, then convert again. The defaults suit most documents." },
+      { title: "Download", body: "Save the PDF, or continue into Compress PDF or Protect PDF." },
+    ],
+    tips: [
+      "Headings, lists, tables and images are preserved. Complex layouts, unusual fonts and floating objects are simplified.",
+      "If layout is critical (a designed brochure, say), export from Word directly with File → Save as PDF instead.",
+      "Going the other way? PDF to Word creates an editable document from a text PDF.",
+    ],
+    faq: [
+      { q: "Will it look exactly like Word?", a: "For typical documents it looks very close. Highly designed layouts can differ, so check the preview." },
+      PRIVATE_Q,
+    ],
+    related: ["reduce-pdf-size-under-200kb", "password-protect-a-pdf", "merge-pdf-files"],
+  },
+  {
+    slug: "convert-pdf-to-excel",
+    tool: "pdf-to-excel",
+    title: "How to convert a PDF table to Excel",
+    description: "Pull tables from a PDF into an Excel workbook, with numbers converted to real numbers. Free, in your browser.",
+    minutes: 2,
+    intro: "Bank statements, invoices and reports often arrive as PDFs. This turns their tables into a spreadsheet you can sort and calculate with.",
+    short: "Open PDF to Excel, add a PDF that contains real text, choose one sheet per page or all in one, and download the .xlsx.",
+    steps: [
+      { title: "Open PDF to Excel and add your PDF", body: "It must contain selectable text. If you can’t select the text with your mouse, it’s a scan (see the tip below)." },
+      { title: "Choose the layout", body: "“One per page” makes a sheet for each page. “All in one” makes a single continuous sheet." },
+      { title: "Numbers", body: "Keep “Convert to numbers” on so values like 1,250.00 or 12% become real numbers you can calculate with." },
+      { title: "Convert and check", body: "Open the workbook and check merged headers and unusual cells. PDFs don’t store tables, so columns are inferred from where the text sits." },
+    ],
+    tips: [
+      "Scanned PDF? Run OCR PDF first to add a text layer, then convert it.",
+      "If columns come out uneven, try “All in one” or convert one page at a time.",
+    ],
+    faq: [
+      { q: "Why don’t all tables convert perfectly?", a: "A PDF only records where each piece of text is drawn, not the table itself, so the columns are a best guess. Simple, aligned tables work best." },
+      PRIVATE_Q,
+    ],
+    related: ["make-a-scanned-pdf-searchable", "convert-word-to-pdf", "split-a-pdf"],
+  },
+  {
+    slug: "split-a-pdf",
+    tool: "split-pdf",
+    title: "How to split a PDF into separate files",
+    description: "Split a PDF by page range, into single pages, or every N pages. Free, private, and no limits.",
+    minutes: 2,
+    intro: "Need to send just chapter two, or break a scan into one file per page? Splitting takes seconds.",
+    short: "Open Split PDF, add your file, choose Every page, Custom ranges or Every N pages, press Split, and download the files (as a ZIP).",
+    steps: [
+      { title: "Open Split PDF and add your file", body: "The pages are counted for you." },
+      { title: "Choose how to split", body: "Every page makes one file per page. Custom ranges lets you type something like 1-3, 4-6, 9. Every N pages cuts the document into equal parts." },
+      { title: "Split", body: "Press Split PDF. Each part is named with its page numbers." },
+      { title: "Download", body: "Download the files individually or all together as a ZIP." },
+    ],
+    tips: [
+      "Just want to keep some pages in one file? Use Extract pages and click the ones you want.",
+      "Want to throw pages away? Use Remove pages.",
+      "Rearranging pages? Organize PDF lets you drag thumbnails.",
+    ],
+    faq: [
+      { q: "Does splitting reduce quality?", a: "No. Pages are copied as they are, so nothing is re-compressed." },
+      PRIVATE_Q,
+    ],
+    related: ["merge-pdf-files", "reduce-pdf-size-under-200kb", "compare-two-pdf-versions"],
+  },
+  {
+    slug: "compress-image-to-100kb",
+    tool: "compress-image",
+    title: "How to compress an image to under 100 KB",
+    description: "Shrink JPG, PNG or WebP images to a size limit like 50 KB, 100 KB or 200 KB — free, in bulk, without uploading them.",
+    minutes: 2,
+    intro: "Upload forms love to say “maximum 100 KB”. This finds the best-looking version of your image that fits the limit.",
+    short: "Open Compress image, add your photos, set Target size to Under 100 KB, and download the smaller versions.",
+    steps: [
+      { title: "Open Compress image and add your pictures", body: "You can compress a whole batch at once." },
+      { title: "Set the target size", body: "Choose Under 100 KB (options go from 50 KB to 2 MB). The tool finds the highest quality that still fits and shrinks the picture dimensions only if it must." },
+      { title: "Watch the estimate", body: "The panel shows an estimated size for your first picture and updates as you change options." },
+      { title: "Compare and download", body: "For a single image, drag the before/after slider to check the quality. Then download — several files arrive together as a ZIP." },
+    ],
+    tips: [
+      "PNG can’t be tuned like JPG. Choose WebP or JPG as the output format for much bigger savings.",
+      "Set “Max dimension” (for example 1280 px) if you also want smaller pixel dimensions.",
+      "For photos with exact sizes, like passport photos or signatures, use the Photo & signature resizer.",
+    ],
+    faq: [
+      { q: "Will my picture look worse?", a: "Slightly, at very small limits. The before/after slider lets you judge before downloading." },
+      PRIVATE_Q,
+    ],
+    related: ["passport-photo-under-200kb", "signature-under-20kb", "reduce-pdf-size-under-200kb"],
+  },
+];
+
+export const getGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);
+export const guidesForTool = (tool: string) => GUIDES.filter((g) => g.tool === tool);

@@ -116,10 +116,10 @@ export async function comparePdf(files: File[], ctx: Ctx): Promise<Result> {
   const verdict = changed.length ? `${changed.length} of ${total} page${total === 1 ? "" : "s"} differ` : "The two files look identical";
   sum.drawText(verdict, { x: 48, y, size: 16, font: bold, color: changed.length ? rgb(0.85, 0.15, 0.25) : rgb(0.1, 0.55, 0.3) }); y -= 24;
   if (changed.length) {
-    sum.drawText(`+${addedTotal} words added   −${removedTotal} words removed`, { x: 48, y, size: 11, font, color: rgb(0.3, 0.3, 0.3) }); y -= 26;
+    sum.drawText(`+${addedTotal} words added   -${removedTotal} words removed`, { x: 48, y, size: 11, font, color: rgb(0.3, 0.3, 0.3) }); y -= 26;
     for (const c of changed) {
       if (y < 60) break;
-      sum.drawText(safe(`Page ${c.index + 1}: ${(c.ratio * 100).toFixed(1)}% of the page changed · +${c.added.length} / −${c.removed.length} words`), { x: 48, y, size: 11, font, color: rgb(0.15, 0.15, 0.15) }); y -= 16;
+      sum.drawText(safe(`Page ${c.index + 1}: ${(c.ratio * 100).toFixed(1)}% of the page changed · +${c.added.length} / -${c.removed.length} words`), { x: 48, y, size: 11, font, color: rgb(0.15, 0.15, 0.15) }); y -= 16;
     }
   }
   sum.drawText("Red marks on the right-hand image show what changed on the page.", { x: 48, y: 40, size: 9, font, color: rgb(0.5, 0.5, 0.5) });
@@ -129,7 +129,7 @@ export async function comparePdf(files: File[], ctx: Ctx): Promise<Result> {
   for (const c of changed) {
     const page = doc.addPage([PW, PH]);
     page.drawText(`Page ${c.index + 1}`, { x: M, y: PH - 34, size: 16, font: bold });
-    page.drawText(`${(c.ratio * 100).toFixed(1)}% changed  ·  +${c.added.length} / −${c.removed.length} words`, { x: M + 80, y: PH - 32, size: 10, font, color: rgb(0.4, 0.4, 0.4) });
+    page.drawText(`${(c.ratio * 100).toFixed(1)}% changed  ·  +${c.added.length} / -${c.removed.length} words`, { x: M + 80, y: PH - 32, size: 10, font, color: rgb(0.4, 0.4, 0.4) });
     const gap = 14, cw = (PW - M * 2 - gap * 2) / 3, availH = PH - 60 - 150;
     const scale = Math.min(cw / W, availH / c.diff.height);
     const iw = W * scale, ih = c.diff.height * scale;

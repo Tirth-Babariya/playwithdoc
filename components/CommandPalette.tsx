@@ -10,8 +10,13 @@ import { FlowChips } from "./FormatChip";
 import { Icon, toolIcon } from "./Icon";
 
 /** Not a real tool: a shortcut to the multi-step Recipes page, so Ctrl+K reaches it too. */
-const RECIPES_ENTRY = { slug: "recipes", name: "Recipes — chain tools", short: "Merge → compress → protect, saved and re-run in one click", cat: "organize", from: ["pdf"], to: ["pdf"], keywords: [] } as unknown as Tool;
-const RECIPE_WORDS = /recip|workflow|chain|automat|multi.?step|combo|pipeline|batch|several/i;
+const page = (slug: string, name: string, short: string) => ({ slug, name, short, cat: "organize", from: ["pdf"], to: ["pdf"], keywords: [] } as unknown as Tool);
+const PAGES: { entry: Tool; href: string; words: RegExp }[] = [
+  { entry: page("recipes", "Recipes — chain tools", "Merge → compress → protect, saved and re-run in one click"), href: "/recipes", words: /recip|workflow|chain|automat|multi.?step|combo|pipeline|batch|several/i },
+  { entry: page("guides", "How-to guides", "Step-by-step: shrink a PDF, sign without uploading, passport photo…"), href: "/guides", words: /guide|how.?to|tutorial|learn|help|steps|explain/i },
+  { entry: page("prove-it", "Prove it — nothing is uploaded", "A live demo of the no-upload, network-locked design"), href: "/prove-it", words: /prove|proof|privacy|private|secure|safe|trust|upload|verify|network/i },
+];
+const PAGE_HREF = Object.fromEntries(PAGES.map((p) => [p.entry.slug, p.href]));
 
 type Ctx = { open: (q?: string) => void; mod: string };
 const PaletteCtx = createContext<Ctx>({ open: () => {}, mod: "Ctrl" });
@@ -47,7 +52,7 @@ export function PaletteProvider({ children }: { children: React.ReactNode }) {
   return (
     <PaletteCtx.Provider value={value}>
       {children}
-      {isOpen && <Palette initial={initial} onClose={() => setOpen(false)} onPick={(slug) => { setOpen(false); router.push(slug === "recipes" ? "/recipes" : `/tools/${slug}`); }} />}
+      {isOpen && <Palette initial={initial} onClose={() => setOpen(false)} onPick={(slug) => { setOpen(false); router.push(PAGE_HREF[slug] ?? `/tools/${slug}`); }} />}
     </PaletteCtx.Provider>
   );
 }
@@ -60,8 +65,8 @@ function Palette({ initial, onClose, onPick }: { initial: string; onClose: () =>
   const recentSet = useMemo(() => new Set(recent.map((t) => t.slug)), [recent]);
   const results = useMemo(() => {
     const base = searchTools(q, 40);
-    if (!q.trim()) return [...recent, ...base.filter((t) => !recentSet.has(t.slug)), RECIPES_ENTRY];
-    return RECIPE_WORDS.test(q) ? [RECIPES_ENTRY, ...base] : base;
+    if (!q.trim()) return [...recent, ...base.filter((t) => !recentSet.has(t.slug)), ...PAGES.map((p) => p.entry)];
+    return [...PAGES.filter((p) => p.words.test(q)).map((p) => p.entry), ...base];
   }, [q, recent, recentSet]);
 
   useEffect(() => { setActive(0); }, [q]);

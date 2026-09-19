@@ -1,0 +1,82 @@
+/* ═════════ Guides and the Prove-it page ═════════ */
+
+/* ───── Guides ───── */
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.guide-card { display: flex; flex-direction: column; gap: 8px; padding: 20px; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
+.guide-card:hover { transform: translateY(-2px); border-color: var(--fg-3); box-shadow: var(--shadow-lg); }
+.guide-card .tool-top { margin-bottom: 4px; }
+.guide-card b { font-size: 16.5px; letter-spacing: -0.02em; line-height: 1.3; }
+.guide-card .muted { font-size: 13.5px; line-height: 1.5; }
+.guide-meta { margin-top: auto; padding-top: 6px; font: 500 12px var(--font-geist-mono), monospace; color: var(--brand); }
+
+.guide { max-width: 760px; }
+.guide-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.guide-badges span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 12.5px; color: var(--fg-2); background: var(--bg-2); border: 1px solid var(--line); }
+.guide h1 { font-size: clamp(30px, 4.6vw, 44px); letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 14px; text-wrap: balance; }
+.guide h2 { font-size: 24px; letter-spacing: -0.03em; margin: 44px 0 16px; }
+.guide .lead { font-size: 18px; }
+.guide-short { margin-top: 26px; padding: 22px 24px; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--brand) 35%, var(--line)); background: radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--brand) 10%, transparent), transparent 70%), var(--card); }
+.guide-short b { font: 600 11.5px var(--font-geist-mono), monospace; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand); }
+.guide-short p { margin: 8px 0 16px; font-size: 17px; line-height: 1.55; color: var(--fg); }
+.guide-steps { display: flex; flex-direction: column; gap: 0; counter-reset: s; }
+.guide-steps li { display: flex; gap: 18px; padding: 22px 0; border-top: 1px solid var(--line); }
+.guide-steps li:first-child { border-top: 0; padding-top: 4px; }
+.guide-num { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--fg); color: var(--bg); font: 600 14px var(--font-geist-mono), monospace; }
+.guide-steps h3 { font-size: 18px; letter-spacing: -0.02em; margin: 3px 0 6px; }
+.guide-steps p { color: var(--fg-2); font-size: 15.5px; line-height: 1.65; }
+.guide-tips { display: flex; flex-direction: column; gap: 12px; }
+.guide-tips li { display: flex; gap: 12px; color: var(--fg-2); font-size: 15.5px; line-height: 1.6; padding: 14px 16px; border-radius: 14px; background: var(--bg-2); border: 1px solid var(--line); }
+.guide-tips li svg { color: var(--good); flex: none; margin-top: 4px; }
+.guide-cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 44px; padding: 24px 26px; }
+.guide-cta b { font-size: 18px; letter-spacing: -0.02em; } .guide-cta p { margin: 4px 0 0; font-size: 14px; }
+.guide-proof { display: flex; align-items: center; gap: 10px; margin-top: 34px; font-size: 14px; color: var(--fg-2); }
+.guide-proof svg { color: var(--good); flex: none; } .guide-proof a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) { .guide-steps li { gap: 14px; } .guide-cta { padding: 20px; } .guide-cta .btn { width: 100%; } }
+
+/* home pill that links to the proof */
+.pill-link { transition: border-color 0.15s, transform 0.15s; }
+.pill-link:hover { border-color: var(--fg-3); transform: translateY(-1px); }
+.pill-link b { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; color: var(--brand); font-weight: 600; }
+
+/* ───── Prove it ───── */
+.proof { display: flex; flex-direction: column; gap: 46px; margin-top: 8px; max-width: 900px; }
+.proof-sec h2 { display: flex; align-items: center; gap: 12px; font-size: 21px; letter-spacing: -0.03em; margin-bottom: 14px; }
+.proof-sec h2 > span { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--fg); color: var(--bg); font: 600 13px var(--font-geist-mono), monospace; flex: none; }
+.proof-lead { margin: -4px 0 14px; max-width: 680px; line-height: 1.6; }
+.proof-sec code { font: 12.5px var(--font-geist-mono), monospace; padding: 1px 6px; border-radius: 5px; background: var(--bg-3); border: 1px solid var(--line); word-break: break-all; }
+.proof-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.proof-tile { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); }
+.proof-tile b { font: 700 40px var(--font-geist-mono), monospace; letter-spacing: -0.04em; line-height: 1; }
+.proof-tile span { font-size: 13px; color: var(--fg-2); line-height: 1.4; }
+.proof-tile.good { border-color: color-mix(in srgb, var(--good) 40%, var(--line)); background: color-mix(in srgb, var(--good) 6%, var(--card)); } .proof-tile.good b { color: var(--good); }
+.proof-tile.bad { border-color: color-mix(in srgb, var(--bad) 50%, var(--line)); background: color-mix(in srgb, var(--bad) 7%, var(--card)); } .proof-tile.bad b { color: var(--bad); }
+.proof-log { border: 1px solid var(--line-2); border-radius: 14px; background: var(--bg); overflow: hidden; font: 12.5px var(--font-geist-mono), monospace; }
+.proof-log-head { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); color: var(--fg-3); }
+.proof-log-head i { width: 9px; height: 9px; border-radius: 50%; background: var(--line-2); } .proof-log-head span { margin-left: 8px; }
+.proof-log ul { margin: 0; max-height: 300px; overflow-y: auto; }
+.proof-log li { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--line); color: var(--fg-2); }
+.proof-log li:last-child { border-bottom: 0; } .proof-log .kind { width: 62px; flex: none; color: var(--fg-3); }
+.proof-log .url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fg); }
+.proof-log em { font-style: normal; color: var(--good); flex: none; } .proof-log li.cross { background: color-mix(in srgb, var(--bad) 8%, transparent); } .proof-log li.cross em { color: var(--bad); }
+.proof-note { margin: 12px 0 0; font-size: 13.5px; color: var(--fg-3); line-height: 1.55; }
+.proof-demo { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px; }
+.proof-result { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+.proof-result dl { display: flex; flex-direction: column; gap: 12px; margin: 0; }
+.proof-result dl > div { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 14px; align-items: baseline; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.proof-result dl > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.proof-result dt { font-size: 13px; color: var(--fg-3); } .proof-result dd { margin: 0; font-size: 14.5px; word-break: break-word; }
+.proof-result dd.mono { font: 12.5px/1.5 var(--font-geist-mono), monospace; } .goodc { color: var(--good); font-weight: 600; } .warnc { color: var(--warn); font-weight: 600; }
+.good-alert { display: flex; gap: 12px; align-items: flex-start; margin: 0; color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, transparent); background: color-mix(in srgb, var(--good) 8%, transparent); }
+.good-alert div { color: var(--fg); } .good-alert svg { flex: none; margin-top: 2px; }
+.proof-csp { border: 1px solid var(--line-2); border-radius: 14px; background: var(--bg-2); padding: 16px 18px; }
+.proof-csp ul { display: flex; flex-direction: column; gap: 6px; margin: 0; font: 12.5px/1.5 var(--font-geist-mono), monospace; color: var(--fg-2); }
+.proof-csp li { word-break: break-word; padding: 4px 10px; border-radius: 8px; } .proof-csp li b { color: var(--fg); }
+.proof-csp li.hot { background: color-mix(in srgb, var(--brand) 12%, transparent); outline: 1px solid color-mix(in srgb, var(--brand) 40%, transparent); }
+.proof-steps { display: flex; flex-direction: column; gap: 12px; counter-reset: p; }
+.proof-steps li { counter-increment: p; position: relative; padding: 14px 16px 14px 52px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--fg-2); line-height: 1.6; font-size: 15px; }
+.proof-steps li::before { content: counter(p); position: absolute; left: 16px; top: 14px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--bg-3); font: 600 12px var(--font-geist-mono), monospace; color: var(--fg); }
+.proof-steps b { color: var(--fg); } .proof-steps a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.proof-honest { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; padding-left: 20px; list-style: disc; } .proof-honest li { color: var(--fg-2); line-height: 1.65; font-size: 15px; }
+.proof-cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 50px; padding: 24px 26px; max-width: 900px; }
+.proof-cta b { font-size: 18px; letter-spacing: -0.02em; } .proof-cta p { margin: 4px 0 0; }
+@media (max-width: 640px) { .proof-result dl > div { grid-template-columns: 1fr; gap: 4px; } .proof-tile b { font-size: 32px; } .proof-log .kind { display: none; } }

@@ -6,6 +6,7 @@ import { Icon } from "@/components/Icon";
 import { ToolCard } from "@/components/ToolCard";
 import { NetBadge } from "@/components/NetBadge";
 import { ToolView } from "@/components/ToolView";
+import { guidesForTool } from "@/lib/guides";
 import { helpFor, jsonLd } from "@/lib/help";
 import { getTool, TOOLS } from "@/lib/tools";
 
@@ -29,6 +30,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const tool = getTool((await params).slug);
   if (!tool) notFound();
   const help = helpFor(tool);
+  const guides = guidesForTool(tool.slug);
   const related = TOOLS.filter((t) => t.slug !== tool.slug && t.cat === tool.cat && (t.featured || tool.cat !== "image")).slice(0, 6);
 
   return (
@@ -72,6 +74,19 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           {help.faq.map((f) => <details key={f.q}><summary>{f.q}<Icon name="plus" size={16} /></summary><p>{f.a}</p></details>)}
         </div>
       </section>
+
+      {guides.length > 0 && (
+        <section className="related">
+          <h2>Guides</h2>
+          <div className="guide-grid">
+            {guides.map((g) => (
+              <Link key={g.slug} href={`/guides/${g.slug}`} className="card guide-card">
+                <b>{g.title}</b><span className="muted">{g.description}</span><span className="guide-meta">{g.minutes} min read</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className="related">

@@ -7,6 +7,7 @@
 let installed = false;
 let outgoing = 0;
 let last = "";
+let paused = 0;
 const subs = new Set<() => void>();
 const notify = () => subs.forEach((f) => f());
 
@@ -14,6 +15,7 @@ const notify = () => subs.forEach((f) => f());
 const INTERNAL = /^\/(__nextjs|_next\/|_vercel\/)/;
 
 function note(method: string, target: string, hasBody: boolean) {
+  if (paused > 0) return; // a deliberate demo request (see the Prove it page)
   let u: URL;
   try { u = new URL(target, location.href); } catch { return; }
   const crossSite = u.origin !== location.origin;
@@ -53,6 +55,12 @@ export function installNetGuard() {
     const beacon = navigator.sendBeacon.bind(navigator);
     navigator.sendBeacon = (url: string | URL, data?: BodyInit | null) => { note("POST", String(url), true); return beacon(url, data); };
   }
+}
+
+/** Runs a deliberate probe request without counting it as an upload. Only ever used with dummy data. */
+export async function pauseNetGuard<T>(fn: () => Promise<T>): Promise<T> {
+  paused++;
+  try { return await fn(); } finally { paused--; }
 }
 
 export const getOutgoing = () => outgoing;

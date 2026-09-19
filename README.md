@@ -124,6 +124,11 @@ Start from a ready-made recipe — *Email-ready PDF*, *Scans → searchable & sm
 - **Compare PDFs** puts the original (A) next to the new version (B) and produces a report: changed areas in red, plus the words that were added or removed on each page.
 - **PDF to Excel** turns tables in text-based PDFs into a workbook, with numbers converted to real numbers.
 
+## Guides and proof
+
+- **How-to guides** — 16 short, step-by-step articles for the things people search for most ("Reduce a PDF to under 200 KB", "Sign a PDF without uploading it", "Make a passport photo at home"…). Each ends at the tool that does the job, has FAQ and search-engine structured data, and links to related guides.
+- **Prove it** (`/prove-it`) — a live demonstration instead of a promise: a running count of every network request the page makes (other websites: 0), a demo that reads a file you choose and shows nothing left the tab, a button that *tries* to send data to another site so you can watch the browser block it, and the actual security policy read from the server. It ends with four ways to check it yourself, and an honest list of what can't be promised.
+
 ## Keyboard
 
 | Keys | Does |

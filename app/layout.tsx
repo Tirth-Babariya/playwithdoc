@@ -10,6 +10,7 @@ import "./globals.css";
 import "./premium.css";
 import "./premium2.css";
 import "./premium3.css";
+import "./premium4.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
