@@ -4,7 +4,7 @@
 // Uses Playwright's Chromium by default; set CHROME_PATH to use an installed Chrome/Edge instead.
 import fs from "node:fs";
 import path from "node:path";
-import { BASE, FIXTURES, OUT, launch, makeFixtures, require } from "./helpers.mjs";
+import { BASE, FIXTURES, OUT, launch, makeFixtures, require, hydrated, openPalette } from "./helpers.mjs";
 
 const { PDFDocument } = require("pdf-lib");
 const JSZip = require("jszip");
@@ -24,7 +24,7 @@ page.on("console", (m) => { if (m.type() === "error") errors.push("console: " + 
 const abs = (f) => (path.isAbsolute(f) ? f : path.join(fx, f));
 async function open(slug, files) {
   await page.goto(`${BASE}/tools/${slug}`);
-  await page.waitForSelector("input[type=file]", { state: "attached" });
+  await page.waitForSelector("input[type=file]", { state: "attached" }); await hydrated(page);
   if (files?.length) await page.setInputFiles("input[type=file]", files.map(abs));
 }
 async function runAndWait(timeout = 90000) {
@@ -261,17 +261,17 @@ ok("compress-pdf lossless", !r.error, r.error || r.note);
 
 // ── 9. palette recent, offline ──
 await page.goto(BASE + "/");
-await page.keyboard.press("Control+k"); await page.waitForTimeout(300);
+await openPalette(page);
 ok("palette shows Recent", /recent/i.test(await page.locator(".pal-label").innerText()), await page.locator(".pal-label").innerText());
 await page.keyboard.press("Escape");
-await page.goto(BASE + "/tools/jpg-to-pdf"); await page.waitForSelector("input[type=file]", { state: "attached" });
+await page.goto(BASE + "/tools/jpg-to-pdf"); await page.waitForSelector("input[type=file]", { state: "attached" }); await hydrated(page);
 await page.evaluate(async () => { await navigator.serviceWorker.ready; });
-await page.reload(); await page.waitForTimeout(1500);
+await page.reload(); await page.waitForTimeout(1500); await hydrated(page);
 ok("service worker controls page", await page.evaluate(() => !!navigator.serviceWorker.controller));
 await page.setInputFiles("input[type=file]", [abs("red.jpg")]); await page.locator("button.run").click(); await page.waitForSelector(".panel.done", { timeout: 30000 });
 await ctx.setOffline(true);
 await page.goto(BASE + "/tools/jpg-to-pdf", { waitUntil: "domcontentloaded" });
-await page.waitForSelector("input[type=file]", { state: "attached", timeout: 15000 });
+await page.waitForSelector("input[type=file]", { state: "attached", timeout: 15000 }); await hydrated(page);
 await page.setInputFiles("input[type=file]", [abs("green.jpg")]); await page.locator("button.run").click();
 let offlineOk = true; try { await page.waitForSelector(".panel.done", { timeout: 20000 }); } catch { offlineOk = false; }
 ok("works fully OFFLINE after first use", offlineOk);
@@ -280,16 +280,17 @@ await ctx.setOffline(false);
 // ── 10. visuals ──
 await page.goto(BASE + "/"); await page.waitForTimeout(1200);
 await page.screenshot({ path: path.join(out, "home.png") });
+await hydrated(page, ".hdr-search");
 await page.locator(".theme button[aria-label='Dark theme']").click();
-await page.goto(BASE + "/tools/jpg-to-pdf");
+await page.goto(BASE + "/tools/jpg-to-pdf"); await hydrated(page);
 await page.setInputFiles("input[type=file]", ["red.jpg", "green.jpg", "blue.jpg"].map(abs)); await page.waitForSelector(".fc img"); await page.waitForTimeout(600);
 await page.screenshot({ path: path.join(out, "cards-dark.png") });
 const mob = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, colorScheme: "dark", acceptDownloads: true });
 const mp = await mob.newPage();
-await mp.goto(BASE + "/tools/jpg-to-pdf"); await mp.setInputFiles("input[type=file]", ["red.jpg", "green.jpg", "blue.jpg"].map(abs)); await mp.waitForSelector(".fc img"); await mp.waitForTimeout(600);
+await mp.goto(BASE + "/tools/jpg-to-pdf"); await hydrated(mp); await mp.setInputFiles("input[type=file]", ["red.jpg", "green.jpg", "blue.jpg"].map(abs)); await mp.waitForSelector(".fc img"); await mp.waitForTimeout(600);
 await mp.screenshot({ path: path.join(out, "mobile-cards.png"), fullPage: true });
 ok("no horizontal overflow (mobile tool w/ files)", !(await mp.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)));
-await mp.goto(BASE + "/tools/sign-pdf"); await mp.setInputFiles("input[type=file]", [abs("a.pdf")]); await mp.waitForSelector(".ed-over"); await mp.waitForTimeout(700);
+await mp.goto(BASE + "/tools/sign-pdf"); await hydrated(mp); await mp.setInputFiles("input[type=file]", [abs("a.pdf")]); await mp.waitForSelector(".ed-over"); await mp.waitForTimeout(700);
 ok("no horizontal overflow (mobile editor)", !(await mp.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)), await mp.evaluate(() => [...document.querySelectorAll("body *")].filter((e) => e.getBoundingClientRect().right > innerWidth + 1 && getComputedStyle(e).position !== "fixed").slice(0, 4).map((e) => e.tagName + "." + String(e.className).slice(0, 30) + " " + Math.round(e.getBoundingClientRect().right)).join(", ")));
 await mp.screenshot({ path: path.join(out, "mobile-editor.png") });
 

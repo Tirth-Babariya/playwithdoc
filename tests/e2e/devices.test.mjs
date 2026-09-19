@@ -3,7 +3,7 @@
 //   BASE_URL=http://localhost:3000 node tests/e2e/devices.test.mjs
 // Uses Playwright's Chromium by default; set CHROME_PATH to use an installed Chrome/Edge instead.
 import path from "node:path";
-import { BASE, FIXTURES, OUT, launch, makeFixtures, require } from "./helpers.mjs";
+import { BASE, FIXTURES, OUT, launch, makeFixtures, require, hydrated } from "./helpers.mjs";
 const { devices } = require("playwright-core");
 const B = BASE;
 const FX = FIXTURES.split(path.sep).join("/"), SHOTS = OUT.split(path.sep).join("/");
@@ -41,7 +41,7 @@ for (const [name, cfg] of list.filter(([n]) => !process.env.ONLY || process.env.
   const hdr = await p.evaluate(() => [...document.querySelectorAll(".hdr .hdr-gh, .hdr .hdr-search, .hdr .theme, .hdr .brand")].map((e) => { const r = e.getBoundingClientRect(); return r.right <= innerWidth + 1 && r.left >= -1 && r.width > 0; }));
   if (!hdr.every(Boolean)) { bad++; console.log("FAIL", name.padEnd(24), "navbar items cut off", hdr); }
   // search palette via tap/click
-  await tap(p.locator(".hero-search")); await p.waitForSelector(".pal"); await p.keyboard.type("jpg to pdf"); await p.waitForTimeout(250);
+  await hydrated(p, ".hero-search"); await tap(p.locator(".hero-search")); await p.waitForSelector(".pal"); await p.keyboard.type("jpg to pdf"); await p.waitForTimeout(250);
   const palBox = await p.locator(".pal").boundingBox();
   if (palBox.x < -1 || palBox.x + palBox.width > cfg.viewport.width + 1) { bad++; console.log("FAIL", name.padEnd(24), "palette off-screen", JSON.stringify(palBox)); }
   await tap(p.locator(".pal-item").first()); await p.waitForURL("**/tools/jpg-to-pdf");
@@ -72,14 +72,14 @@ for (const [name, cfg] of list.filter(([n]) => !process.env.ONLY || process.env.
   await p.screenshot({ path: `${SHOTS}/${name.replace(/\W+/g, "_")}_result.png` });
 
   // editor
-  await p.goto(B + "/tools/sign-pdf"); await p.setInputFiles("input[type=file]", [`${FX}/a.pdf`]); await p.waitForSelector(".ed-over"); await p.waitForTimeout(800);
+  await p.goto(B + "/tools/sign-pdf"); await hydrated(p); await p.setInputFiles("input[type=file]", [`${FX}/a.pdf`]); await p.waitForSelector(".ed-over"); await p.waitForTimeout(800);
   report(name, "sign/edit editor", await overflow(p));
   const pageBox = await p.locator(".ed-page").boundingBox();
   if (pageBox.width > cfg.viewport.width) { bad++; console.log("FAIL", name.padEnd(24), "PDF page wider than screen", pageBox.width); }
   await p.screenshot({ path: `${SHOTS}/${name.replace(/\W+/g, "_")}_editor.png` });
 
   // home screenshot for a few devices
-  if (["iPhone 14", "iPad Mini portrait", "Pixel 7"].includes(name)) { await p.goto(B + "/"); await p.waitForTimeout(900); await p.screenshot({ path: `${SHOTS}/${name.replace(/\W+/g, "_")}_home.png` }); await p.goto(B + "/tools/jpg-to-pdf"); await p.setInputFiles("input[type=file]", ["red.jpg", "green.jpg", "blue.jpg"].map((f) => `${FX}/${f}`)); await p.waitForSelector(".fc img"); await p.waitForTimeout(600); await p.screenshot({ path: `${SHOTS}/${name.replace(/\W+/g, "_")}_tool.png` }); }
+  if (["iPhone 14", "iPad Mini portrait", "Pixel 7"].includes(name)) { await p.goto(B + "/"); await p.waitForTimeout(900); await p.screenshot({ path: `${SHOTS}/${name.replace(/\W+/g, "_")}_home.png` }); await p.goto(B + "/tools/jpg-to-pdf"); await hydrated(p); await p.setInputFiles("input[type=file]", ["red.jpg", "green.jpg", "blue.jpg"].map((f) => `${FX}/${f}`)); await p.waitForSelector(".fc img"); await p.waitForTimeout(600); await p.screenshot({ path: `${SHOTS}/${name.replace(/\W+/g, "_")}_tool.png` }); }
   if (errs.length) { bad++; console.log("FAIL", name, "page errors", errs.slice(0, 2)); }
   await ctx.close();
 }

@@ -4,7 +4,7 @@
 // Uses Playwright's Chromium by default; set CHROME_PATH to use an installed Chrome/Edge instead.
 import fs from "node:fs";
 import path from "node:path";
-import { BASE, FIXTURES, OUT, launch, makeFixtures, require } from "./helpers.mjs";
+import { BASE, FIXTURES, OUT, launch, makeFixtures, require, hydrated, openPalette } from "./helpers.mjs";
 const { PDFDocument } = require("pdf-lib");
 const fx = FIXTURES, out = OUT;
 const res = [];
@@ -35,7 +35,7 @@ await page.keyboard.press("Escape"); await page.mouse.click(10, 300);
 // 2. Go offline and use tools that were NEVER opened before.
 await ctx.setOffline(true);
 await page.goto(BASE + "/tools/merge-pdf", { waitUntil: "domcontentloaded" });
-await page.waitForSelector("input[type=file]", { state: "attached", timeout: 15000 });
+await page.waitForSelector("input[type=file]", { state: "attached", timeout: 15000 }); await hydrated(page);
 ok("never-visited tool page loads offline", true);
 ok("offline pill shown", /offline/i.test(await page.locator(".off-pill").innerText()) && !/ready/i.test(await page.locator(".off-pill").innerText()));
 await page.setInputFiles("input[type=file]", [path.join(fx, "a.pdf"), path.join(fx, "b.pdf")]);
@@ -47,7 +47,7 @@ await page.screenshot({ path: path.join(out, "offline-merge.png") });
 
 const trySlug = async (slug, files, extra) => {
   await page.goto(`${BASE}/tools/${slug}`, { waitUntil: "domcontentloaded" });
-  await page.waitForSelector("input[type=file]", { state: "attached", timeout: 15000 });
+  await page.waitForSelector("input[type=file]", { state: "attached", timeout: 15000 }); await hydrated(page);
   await page.setInputFiles("input[type=file]", files.map((f) => path.join(fx, f)));
   if (extra) await extra();
   await page.locator("button.run").click().catch(() => {});
@@ -58,11 +58,12 @@ ok("Protect PDF offline (qpdf wasm)", await trySlug("protect-pdf", ["a.pdf"], as
 ok("Word → PDF offline (mammoth)", await trySlug("word-to-pdf", ["report.docx"]));
 ok("Compress image offline", await trySlug("compress-image", ["red.jpg"]));
 await page.goto(`${BASE}/tools/sign-pdf`, { waitUntil: "domcontentloaded" });
+await hydrated(page);
 await page.setInputFiles("input[type=file]", [path.join(fx, "a.pdf")]);
 let ed = true; try { await page.waitForSelector(".ed-over", { timeout: 20000 }); } catch { ed = false; }
 ok("Sign PDF editor opens offline", ed);
 ok("home page offline", await (async () => { await page.goto(BASE + "/", { waitUntil: "domcontentloaded" }); return (await page.locator("h1").innerText()).includes("Every file format"); })());
-ok("command palette offline", await (async () => { await page.keyboard.press("Control+k"); await page.keyboard.type("jpg to pdf"); await page.waitForTimeout(300); return /JPG to PDF/.test(await page.locator(".pal-item").first().innerText()); })());
+ok("command palette offline", await (async () => { await openPalette(page); await page.keyboard.type("jpg to pdf"); await page.waitForTimeout(300); return /JPG to PDF/.test(await page.locator(".pal-item").first().innerText()); })());
 await page.keyboard.press("Escape");
 
 // 3. OCR without the pack, offline → clean failure; then online → download pack → offline OCR works.

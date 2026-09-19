@@ -66,3 +66,26 @@ export async function makeFixtures(browser) {
   await page.close();
   for (const [name, bytes] of Object.entries({ "ocr.png": imgs.ocr, "noisy.jpg": imgs.noisy, "red.jpg": imgs.red, "green.jpg": imgs.green, "blue.jpg": imgs.blue })) fs.writeFileSync(path.join(FIXTURES, name), Buffer.from(bytes));
 }
+
+/**
+ * Waits until the page is truly interactive. The HTML shows up first and React "wakes up" a moment later;
+ * on a slow machine (like a CI runner) keys and file drops sent in that gap are silently lost.
+ * React marks every DOM node it has taken over with a __reactProps$… property — that is the signal we wait for.
+ */
+export async function hydrated(page, selector = "input[type=file]") {
+  await page.waitForFunction((sel) => {
+    const el = document.querySelector(sel);
+    return !!el && Object.keys(el).some((k) => k.startsWith("__reactProps"));
+  }, selector, { timeout: 45000 });
+}
+
+/** Opens the command palette (Ctrl+K), retrying until it appears — never toggles it closed again. */
+export async function openPalette(page) {
+  await hydrated(page, ".hdr-search");
+  for (let i = 0; i < 20; i++) {
+    if (await page.locator(".pal").count()) return;
+    await page.keyboard.press("Control+k");
+    await page.waitForTimeout(600);
+  }
+  if (!(await page.locator(".pal").count())) throw new Error("The command palette did not open");
+}
