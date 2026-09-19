@@ -1,0 +1,29 @@
+{
+  "name": "playwithdoc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && node scripts/build-sw.mjs",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@neslinesli93/qpdf-wasm": "^0.3.0",
+    "geist": "^1.7.2",
+    "jszip": "^3.10.2",
+    "next": "^16.3.5",
+    "pdf-lib": "^1.17.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

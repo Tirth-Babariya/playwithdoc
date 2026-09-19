@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+# generated at build time by scripts/build-sw.mjs
+public/sw.js
+.vercel
+.env*.local
