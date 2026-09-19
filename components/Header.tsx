@@ -16,6 +16,7 @@ export function Header() {
         </Link>
         <nav className="hdr-nav" aria-label="Primary">
           <Link href="/#tools">Tools</Link>
+          <Link href="/recipes">Recipes</Link>
           <Link href="/#why">Why PlayWithDoc</Link>
           <Link href="/#faq">FAQ</Link>
         </nav>

@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "test:features": "node tests/e2e/features.test.mjs",
     "test:offline": "node tests/e2e/offline.test.mjs",
-    "test:devices": "node tests/e2e/devices.test.mjs"
+    "test:devices": "node tests/e2e/devices.test.mjs",
+    "test:extras": "node tests/e2e/extras.test.mjs"
   },
   "dependencies": {
     "@neslinesli93/qpdf-wasm": "^0.3.0",

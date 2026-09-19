@@ -81,17 +81,17 @@ Your files **never leave your device**. Everything is processed by your browser.
 
 ## What you can do
 
-**60+ tools**, all free, all local.
+**70 tools**, all free, all local.
 
 | | |
 |---|---|
 | **Organize** | Merge · Split · Remove pages · Extract pages · Organize (drag thumbnails, rotate, delete) · Scan to PDF (phone camera) |
 | **Optimize** | Compress (lossless / balanced / smallest / **target size**) · Repair · **OCR PDF** (make scans searchable) |
 | **To PDF** | JPG · PNG · WebP · HEIC · any image · **Word** · **Excel/CSV** · **PowerPoint** · HTML · Text |
-| **From PDF** | JPG · PNG · **Word** · **PowerPoint** · Text · Markdown · **Scan → Text (OCR, 9 languages)** |
-| **Edit** | **Edit PDF** (text, whiteout, highlight, draw, images) · Rotate · Crop · Page numbers · Watermark |
+| **From PDF** | JPG · PNG · **Word** · **PowerPoint** · Text · Markdown · **Excel (tables)** · **Scan → Text (OCR, 9 languages)** |
+| **Edit** | **Edit PDF** (text, whiteout, highlight, draw, images) · **Fill PDF form** · **Compare PDFs** (changes marked in red) · Rotate · Crop · Page numbers · Watermark |
 | **Security** | **Sign PDF** (draw / type / upload) · **Protect** (AES‑256) · **Unlock** · **Redact** (truly removes text) |
-| **Images** | 21 image ⇄ image conversions (JPG, PNG, WebP, GIF, BMP, AVIF, HEIC, SVG) · Compress (**under 100 KB**) · Resize |
+| **Images** | 21 image ⇄ image conversions (JPG, PNG, WebP, GIF, BMP, AVIF, HEIC, SVG) · Compress (**under 100 KB**) · Resize · **Photo & signature presets** (passport, visa, signature under 20 KB) |
 | **Data** | CSV ⇄ JSON · Excel → CSV / JSON |
 
 ### Little things that feel good
@@ -106,6 +106,23 @@ Your files **never leave your device**. Everything is processed by your browser.
 - 🌗 **Light / dark / system** theme · fully responsive · installable
 
 ---
+
+## Recipes: do several things in one go
+
+Open **Recipes** in the navbar (or press <kbd>Ctrl</kbd> + <kbd>K</kbd> and type *recipe*) to chain steps and run them on your files in one click:
+
+```
+Merge  ─▶  Compress under 1 MB  ─▶  Watermark  ─▶  Protect with a password
+```
+
+Start from a ready-made recipe — *Email-ready PDF*, *Scans → searchable & small*, *Confidential copy*, *Photos → one small PDF*, *Word → protected PDF* — or build your own, tweak every step's options, and **save it on your device** to re-run any time. The steps are checked as you build (a tool that can't accept the previous step's output is flagged), and everything still runs locally.
+
+## Forms, photos and comparing
+
+- **Fill PDF form** lists every fillable field — text boxes, check boxes, radio buttons, drop-downs — with a progress bar and search, then saves the filled PDF (optionally locked in place). A flat PDF with no fields is handed straight to *Edit PDF*.
+- **Photo & signature presets** frame your photo to an exact size **and** file limit: passport 35×45 mm (under 200 KB), US visa 2×2 in, profile picture, signature 140×60 under 20 KB — or a custom size. Drag to position, zoom, and use the guides; a photographed signature can be cleaned to crisp ink on white.
+- **Compare PDFs** puts the original (A) next to the new version (B) and produces a report: changed areas in red, plus the words that were added or removed on each page.
+- **PDF to Excel** turns tables in text-based PDFs into a workbook, with numbers converted to real numbers.
 
 ## Keyboard
 
@@ -168,7 +185,7 @@ Everything is static, so it runs on Vercel's free tier with no server functions.
 
 ## On the roadmap
 
-Fillable PDF forms · Compare two PDFs · PDF ⇄ Excel · PDF/A · background‑thread processing for huge files
+PDF/A archiving (it needs a proper validator to be trustworthy) · background‑thread processing for huge files · interface translations
 
 ---
 

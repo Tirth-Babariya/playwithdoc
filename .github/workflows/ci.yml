@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: npm run build
 
-  # Real-browser tests against the production build. The three suites run in parallel.
+  # Real-browser tests against the production build. The four suites run in parallel.
   e2e:
     name: E2E · ${{ matrix.suite }}
     needs: check
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [features, offline, devices]
+        suite: [features, offline, devices, extras]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

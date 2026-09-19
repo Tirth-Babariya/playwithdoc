@@ -12,6 +12,11 @@ const TIPS: Record<string, string[]> = {
   "ocr-pdf": ["Higher-quality scans give better results — 300 dpi is ideal.", "Pick the document’s language before you start.", "Your pages look exactly the same afterwards; the text layer is invisible but selectable."],
   "redact-pdf": ["Redacted pages are flattened, so the covered text is removed from the file, not just hidden.", "Zoom in and double-check every box before saving."],
   "protect-pdf": ["Use a long password you can remember — there is no recovery if you forget it.", "You can block printing, copying and editing separately."],
+  "passport-photo": ["Stand about an arm's length from the camera, with a plain light background and even light on your face.", "Use the oval guide: your face should fill most of it, with the eyes near the horizontal line.", "Always check the exact rules of the office you're applying to — sizes and limits vary by country."],
+  "signature-resizer": ["Sign in dark ink on plain white paper and take the photo in good light.", "“Whiten paper” removes shadows so only the ink remains.", "Need a different size? Pick “Custom” in the Photo & signature resizer."],
+  "fill-pdf-form": ["Only fields you change are written to the file.", "“Lock in place” makes the answers permanent text — good before sending the form on.", "No fields found? The PDF is flat; use Edit PDF to type on it instead."],
+  "compare-pdf": ["Put the older version first (A) and the newer second (B) — drag the cards to swap them.", "Works best on text documents; changed words are listed and changed areas are marked in red.", "Scanned documents are compared by how the page looks, since they contain no text."],
+  "pdf-to-excel": ["This works on PDFs with real text (bank statements, invoices, reports). For scans, run OCR PDF first.", "Columns are inferred from where text sits, so check merged headers and unusual cells.", "Choose “All in one” to get a single continuous sheet across pages."],
   "heic-to-jpg": ["iPhone photos in HEIC convert to standard JPG that opens everywhere.", "Drop a whole batch at once and download them as a ZIP."],
 };
 

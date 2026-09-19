@@ -6,6 +6,7 @@ Real-browser tests that drive PlayWithDoc like a person would — dragging cards
 |---|---|
 | `features.test.mjs` | 53 checks: image previews, drag-reorder, rotate, rename, target-size compression, OCR, protect/unlock, sign/edit/redact, PowerPoint round-trip, privacy badge and network lock |
 | `offline.test.mjs` | 18 checks: after one visit, tools you never opened still work with the network **off** (merge, PDF→JPG, protect, Word→PDF, editor, palette, OCR pack) |
+| `extras.test.mjs` | Photo & signature presets (exact pixels + KB limits), fillable forms, Compare PDFs, PDF to Excel, Recipes |
 | `devices.test.mjs` | 11 phone/tablet/desktop profiles with touch: no sideways scrolling, navbar fits, tap controls work |
 
 ## Run them locally
@@ -25,6 +26,7 @@ In a second terminal:
 BASE_URL=http://localhost:3000 npm run test:features
 BASE_URL=http://localhost:3000 npm run test:offline
 BASE_URL=http://localhost:3000 npm run test:devices
+BASE_URL=http://localhost:3000 npm run test:extras
 ```
 
 On Windows PowerShell use `$env:BASE_URL="http://localhost:3000"; npm run test:features`.
@@ -34,5 +36,5 @@ Sample files are generated automatically into `tests/e2e/.fixtures`; screenshots
 
 ## On GitHub
 
-`.github/workflows/ci.yml` runs a type-check and build, then all three suites in parallel, on every push to `main` and every pull request.
+`.github/workflows/ci.yml` runs a type-check and build, then all four suites in parallel, on every push to `main` and every pull request.
 When a suite fails, its screenshots are attached to the run as an artifact.

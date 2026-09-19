@@ -16,14 +16,14 @@ export async function launch() {
   return chromium.launch({ headless: true, ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}) });
 }
 
-async function pdf(name, pages, title) {
+async function pdf(name, pages, title, edits = {}) {
   const { PDFDocument, StandardFonts } = require("pdf-lib");
   const d = await PDFDocument.create();
   const f = await d.embedFont(StandardFonts.Helvetica), fb = await d.embedFont(StandardFonts.HelveticaBold);
   for (let i = 1; i <= pages; i++) {
     const p = d.addPage([595, 842]);
     p.drawText(`${title} — Page ${i}`, { x: 60, y: 760, size: 26, font: fb });
-    for (let l = 0; l < 20; l++) p.drawText(`Line ${l + 1}: The quick brown fox jumps over the lazy dog on page ${i}.`, { x: 60, y: 700 - l * 18, size: 11, font: f });
+    for (let l = 0; l < 20; l++) p.drawText(edits[i]?.[l] ?? `Line ${l + 1}: The quick brown fox jumps over the lazy dog on page ${i}.`, { x: 60, y: 700 - l * 18, size: 11, font: f });
   }
   fs.writeFileSync(path.join(FIXTURES, name), await d.save());
 }
@@ -38,12 +38,42 @@ async function docx(name) {
   fs.writeFileSync(path.join(FIXTURES, name), await z.generateAsync({ type: "nodebuffer" }));
 }
 
+
+async function formPdf(name) {
+  const { PDFDocument, StandardFonts } = require("pdf-lib");
+  const d = await PDFDocument.create();
+  const page = d.addPage([595, 842]);
+  const font = await d.embedFont(StandardFonts.Helvetica);
+  page.drawText("Application form", { x: 60, y: 780, size: 22, font });
+  const form = d.getForm();
+  form.createTextField("full_name").addToPage(page, { x: 60, y: 700, width: 300, height: 24 });
+  form.createCheckBox("agree_terms").addToPage(page, { x: 60, y: 650, width: 20, height: 20 });
+  const country = form.createDropdown("country");
+  country.addOptions(["India", "USA", "France"]);
+  country.addToPage(page, { x: 60, y: 600, width: 200, height: 24 });
+  fs.writeFileSync(path.join(FIXTURES, name), await d.save());
+}
+
+async function tablePdf(name) {
+  const { PDFDocument, StandardFonts } = require("pdf-lib");
+  const d = await PDFDocument.create();
+  const page = d.addPage([595, 842]);
+  const font = await d.embedFont(StandardFonts.Helvetica);
+  page.drawText("Price list", { x: 60, y: 760, size: 18, font });
+  const rows = [["Item", "Qty", "Price"], ["Pen", "12", "1.50"], ["Ink", "3", "8.25"], ["Paper", "40", "0.10"]];
+  rows.forEach((r, i) => r.forEach((cell, c) => page.drawText(cell, { x: [60, 240, 400][c], y: 700 - i * 26, size: 12, font })));
+  fs.writeFileSync(path.join(FIXTURES, name), await d.save());
+}
+
 /** Creates every sample file the tests use: PDFs, a Word doc, a CSV and several images. Needs the app running (images are drawn in the browser). */
 export async function makeFixtures(browser) {
   fs.mkdirSync(FIXTURES, { recursive: true });
   fs.mkdirSync(OUT, { recursive: true });
   await pdf("a.pdf", 3, "Doc A");
   await pdf("b.pdf", 2, "Doc B");
+  await pdf("a-edited.pdf", 3, "Doc A", { 2: { 4: "Line 5: THIS LINE WAS EDITED in the new version." } });
+  await formPdf("form.pdf");
+  await tablePdf("table.pdf");
   await docx("report.docx");
   fs.writeFileSync(path.join(FIXTURES, "data.csv"), 'name,age,city\nAnn,30,"Paris, FR"\nBob,25,Rome\n');
 

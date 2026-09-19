@@ -49,6 +49,16 @@ export type Tool = {
   editor?: "sign" | "edit" | "redact";
   /** Show a live output-size estimate for the first file. */
   estimate?: boolean;
+  /** Photo/signature frame editor (drag to position, zoom) — output size comes from a preset. */
+  crop?: boolean;
+  /** A fixed preset id (see lib/presets.ts) for one-click photo/signature tools. */
+  presetId?: string;
+  /** Fill-in-the-fields form UI for fillable PDFs. */
+  form?: boolean;
+  /** Maximum number of files the tool accepts (e.g. exactly 2 for Compare). */
+  max?: number;
+  /** Label the file cards A, B… instead of 1, 2… */
+  abLabels?: boolean;
   keywords: string[];
   featured?: boolean;
   camera?: boolean;

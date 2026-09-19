@@ -5,8 +5,13 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { getRecent } from "@/lib/recent";
 import { searchTools } from "@/lib/search";
 import { getTool } from "@/lib/tools";
+import type { Tool } from "@/lib/types";
 import { FlowChips } from "./FormatChip";
 import { Icon, toolIcon } from "./Icon";
+
+/** Not a real tool: a shortcut to the multi-step Recipes page, so Ctrl+K reaches it too. */
+const RECIPES_ENTRY = { slug: "recipes", name: "Recipes — chain tools", short: "Merge → compress → protect, saved and re-run in one click", cat: "organize", from: ["pdf"], to: ["pdf"], keywords: [] } as unknown as Tool;
+const RECIPE_WORDS = /recip|workflow|chain|automat|multi.?step|combo|pipeline|batch|several/i;
 
 type Ctx = { open: (q?: string) => void; mod: string };
 const PaletteCtx = createContext<Ctx>({ open: () => {}, mod: "Ctrl" });
@@ -42,7 +47,7 @@ export function PaletteProvider({ children }: { children: React.ReactNode }) {
   return (
     <PaletteCtx.Provider value={value}>
       {children}
-      {isOpen && <Palette initial={initial} onClose={() => setOpen(false)} onPick={(slug) => { setOpen(false); router.push(`/tools/${slug}`); }} />}
+      {isOpen && <Palette initial={initial} onClose={() => setOpen(false)} onPick={(slug) => { setOpen(false); router.push(slug === "recipes" ? "/recipes" : `/tools/${slug}`); }} />}
     </PaletteCtx.Provider>
   );
 }
@@ -55,7 +60,8 @@ function Palette({ initial, onClose, onPick }: { initial: string; onClose: () =>
   const recentSet = useMemo(() => new Set(recent.map((t) => t.slug)), [recent]);
   const results = useMemo(() => {
     const base = searchTools(q, 40);
-    return q.trim() ? base : [...recent, ...base.filter((t) => !recentSet.has(t.slug))];
+    if (!q.trim()) return [...recent, ...base.filter((t) => !recentSet.has(t.slug)), RECIPES_ENTRY];
+    return RECIPE_WORDS.test(q) ? [RECIPES_ENTRY, ...base] : base;
   }, [q, recent, recentSet]);
 
   useEffect(() => { setActive(0); }, [q]);

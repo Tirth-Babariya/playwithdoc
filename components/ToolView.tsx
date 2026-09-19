@@ -8,8 +8,12 @@ import { FORMATS, IMAGE_FMTS, fmtBytes, typeOfFile, type Fmt } from "@/lib/forma
 import { setPending, takePending } from "@/lib/handoff";
 import { pushRecent } from "@/lib/recent";
 import { getTool, toolsForFormat } from "@/lib/tools";
-import type { OptionSpec, Opts, Result } from "@/lib/types";
+import { DEFAULT_CROP, presetDims, type Crop } from "@/lib/presets";
+import type { Opts, Result } from "@/lib/types";
 import { CompareSlider } from "./CompareSlider";
+import { CropFrame } from "./CropFrame";
+import { Field, defaults } from "./Field";
+import { FormFiller } from "./FormFiller";
 import { usePalette } from "./CommandPalette";
 import { fileSlide, PdfStrip, pdfPageSlide, ThumbView, useThumb, type Slide } from "./FilePreview";
 import { FormatChip } from "./FormatChip";
@@ -23,44 +27,10 @@ import { useToast } from "./Toast";
 type Item = { id: string; file: File; type: Fmt | null; rot: number };
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-function defaults(specs: OptionSpec[] | undefined): Opts {
-  const o: Opts = {};
-  for (const s of specs ?? []) o[s.key] = s.default;
-  return o;
-}
-
-function Field({ spec, value, onChange }: { spec: OptionSpec; value: any; onChange: (v: any) => void }) {
-  const id = `opt-${spec.key}`;
-  return (
-    <div className="field">
-      <label htmlFor={id} className="field-label">{spec.label}{spec.type === "range" && <b>{(spec.format ?? String)(value)}</b>}</label>
-      {spec.type === "select" && (spec.options.length <= 4 ? (
-        <div className="seg" role="radiogroup" aria-label={spec.label}>
-          {spec.options.map((o) => (
-            <button key={o.value} role="radio" aria-checked={value === o.value} className={value === o.value ? "on" : ""} onClick={() => onChange(o.value)} title={o.hint}>{o.label}</button>
-          ))}
-        </div>
-      ) : (
-        <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>{spec.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
-      ))}
-      {spec.type === "select" && spec.options.find((o) => o.value === value)?.hint && <div className="field-help">{spec.options.find((o) => o.value === value)!.hint}</div>}
-      {spec.type === "range" && <input id={id} type="range" min={spec.min} max={spec.max} step={spec.step} value={value} onChange={(e) => onChange(+e.target.value)} />}
-      {spec.type === "text" && <input id={id} type={spec.secret ? "password" : "text"} autoComplete={spec.secret ? "off" : undefined} value={value ?? ""} placeholder={spec.placeholder} onChange={(e) => onChange(e.target.value)} spellCheck={false} />}
-      {spec.type === "number" && (
-        <div className="num">
-          <input id={id} type="number" min={spec.min} max={spec.max} value={value} onChange={(e) => onChange(e.target.value === "" ? "" : +e.target.value)} />
-          {spec.suffix && <span>{spec.suffix}</span>}
-        </div>
-      )}
-      {spec.help && <div className="field-help">{spec.help}</div>}
-    </div>
-  );
-}
-
 type DnD = { draggable: boolean; onDragStart: (e: React.DragEvent) => void; onDragOver: (e: React.DragEvent) => void; onDragEnd: () => void };
 
-function FileCard({ it, idx, total, sort, single, canRotate, dragging, onRemove, onMove, onRotate, onReplace, onOpen, dnd }: {
-  it: Item; idx: number; total: number; sort: boolean; single: boolean; canRotate: boolean; dragging: boolean;
+function FileCard({ it, idx, total, sort, single, canRotate, dragging, badge, onRemove, onMove, onRotate, onReplace, onOpen, dnd }: {
+  it: Item; idx: number; badge?: string; total: number; sort: boolean; single: boolean; canRotate: boolean; dragging: boolean;
   onRemove: () => void; onMove: (d: number) => void; onRotate: () => void; onReplace: () => void; onOpen: () => void; dnd: DnD;
 }) {
   const thumb = useThumb(it.file, it.type);
@@ -77,7 +47,7 @@ function FileCard({ it, idx, total, sort, single, canRotate, dragging, onRemove,
     <li className={`fc${dragging ? " dragging" : ""}${single ? " wide" : ""}`} data-fid={it.id} tabIndex={0} onKeyDown={onKey} aria-label={`${it.file.name}. Press Enter to preview${canRotate ? ", R to rotate" : ""}${ordered ? ", Alt and arrows to reorder" : ""}, Delete to remove.`} {...dnd}>
       <div className="fc-media" onClick={onOpen} role="button" aria-label={`Preview ${it.file.name}`}>
         <ThumbView thumb={thumb} type={it.type} rot={it.rot} />
-        {ordered && <span className="fc-idx">{idx + 1}</span>}
+        {ordered && <span className="fc-idx">{badge ?? idx + 1}</span>}
         <span className="fc-tools" onClick={(e) => e.stopPropagation()}>
           {canRotate && <button onClick={onRotate} aria-label={`Rotate ${it.file.name}`} title="Rotate 90° (R)"><Icon name="rotate" size={15} /></button>}
           {!single && <button className="del" onClick={onRemove} aria-label={`Remove ${it.file.name}`} title="Remove (Del)"><Icon name="trash" size={15} /></button>}
@@ -143,9 +113,13 @@ export function ToolView({ slug }: { slug: string }) {
   const toast = useToast();
   const { mod } = usePalette();
   const [items, setItems] = useState<Item[]>([]);
-  const [opts, setOpts] = useState<Opts>(() => defaults(tool.options));
+  const startOpts = useCallback((): Opts => ({ ...defaults(tool.options), ...(tool.presetId ? { preset: tool.presetId } : {}) }), [tool]);
+  const [opts, setOpts] = useState<Opts>(() => startOpts());
   const [pages, setPages] = useState<PageSpec[]>([]);
   const [anns, setAnns] = useState<Ann[]>([]);
+  const [crop, setCrop] = useState<Crop>(DEFAULT_CROP);
+  const [formValues, setFormValues] = useState<Record<string, any>>({});
+  const [formCount, setFormCount] = useState(0);
   const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
   const [prog, setProg] = useState({ p: 0, label: "" });
   const [err, setErr] = useState("");
@@ -180,7 +154,9 @@ export function ToolView({ slug }: { slug: string }) {
     setItems((prev) => {
       if (prev.length === 0 && tool.autorun) autorun.current = true;
       if (!tool.multi) return fresh;
-      return [...prev, ...fresh];
+      const all = [...prev, ...fresh];
+      if (tool.max && all.length > tool.max) setNotice(`${tool.name} takes ${tool.max} files — extra files were left out.`);
+      return tool.max ? all.slice(0, tool.max) : all;
     });
   }, [allowed, tool]);
 
@@ -251,7 +227,7 @@ export function ToolView({ slug }: { slug: string }) {
     try {
       const runner = await tool.load();
       const res = await runner(items.map((i) => i.file), {
-        opts: { ...opts, pages: tool.pages ? pages : undefined, annotations: tool.editor ? anns : undefined, rotations: items.map((i) => i.rot) },
+        opts: { ...opts, pages: tool.pages ? pages : undefined, annotations: tool.editor ? anns : undefined, crop: tool.crop ? crop : undefined, formValues: tool.form ? formValues : undefined, rotations: items.map((i) => i.rot) },
         progress: (p, label) => { if (runId.current === id) setProg((prev) => ({ p, label: label ?? prev.label })); },
       });
       if (runId.current !== id) return;
@@ -266,7 +242,7 @@ export function ToolView({ slug }: { slug: string }) {
       setErr(e instanceof UserError ? e.message : "Something went wrong while processing. The file may be unsupported or too large for your browser's memory.");
       setPhase("idle");
     }
-  }, [items, opts, pages, anns, tool]);
+  }, [items, opts, pages, anns, crop, formValues, tool]);
 
   useEffect(() => {
     if (autorun.current && items.length && phase === "idle") { autorun.current = false; run(); }
@@ -344,16 +320,23 @@ export function ToolView({ slug }: { slug: string }) {
     return out.slice(0, 6);
   }, [result, tool.slug]);
 
-  const reset = () => { runId.current++; setItems([]); setResult(null); setPhase("idle"); setErr(""); setNotice(""); setOpts(defaults(tool.options)); setAnns([]); };
+  const reset = () => { runId.current++; setItems([]); setResult(null); setPhase("idle"); setErr(""); setNotice(""); setOpts(startOpts()); setAnns([]); setCrop(DEFAULT_CROP); setFormValues({}); setFormCount(0); };
 
   const totalSize = items.reduce((n, i) => n + i.file.size, 0);
   const pct = Math.round(prog.p * 100);
   const toLabel = tool.editor ? EDITOR_LABEL[tool.editor]
+    : tool.crop ? "Save my photo"
+    : tool.form ? "Save filled PDF"
+    : tool.slug === "compare-pdf" ? "Compare"
     : !/^ocr/.test(tool.slug) && ["to-pdf", "from-pdf", "image", "data"].includes(tool.cat) && tool.to.length === 1 && tool.from.join() !== tool.to.join() ? `Convert to ${FORMATS[tool.to[0]].label}` : tool.name;
   const canRotate = tool.to[0] === "pdf" && tool.from.every((f) => IMAGE_FMTS.includes(f));
   const canRun = items.length > 0
     && !(tool.pages && !pages.some((p) => p.on))
-    && !(tool.editor && !(tool.editor === "redact" ? anns.some((a) => a.kind === "rect" && a.redact) : anns.length > 0));
+    && !(tool.editor && !(tool.editor === "redact" ? anns.some((a) => a.kind === "rect" && a.redact) : anns.length > 0))
+    && !(tool.form && formCount === 0)
+    && !(tool.max && items.length < Math.min(tool.max, 2));
+  const special = !!(tool.pages || tool.editor || tool.crop || tool.form);
+  const frameDims = presetDims(opts);
   const acceptedLabel = tool.from.length > 3 ? "images" : tool.from.map((f) => FORMATS[f].label).join(" / ");
   const saved = result?.before && result.after !== undefined ? Math.round((1 - result.after / result.before) * 100) : null;
   const running = phase === "running";
@@ -403,8 +386,8 @@ export function ToolView({ slug }: { slug: string }) {
           )}
         </div>
 
-        {single && t0 === "pdf" && (
-          <PdfStrip blob={result.files[0].blob} onOpen={(page, total) => setLb({ slides: Array.from({ length: total }, (_, p) => pdfPageSlide(result.files[0].blob, p, `${names[0] || result.files[0].name} — page ${p + 1}`)), start: page })} />
+        {result.files.filter((f) => typeOfFile(f) === "pdf").length === 1 && (
+          <PdfStrip blob={result.files.find((f) => typeOfFile(f) === "pdf")!.blob} onOpen={(page, total) => setLb({ slides: Array.from({ length: total }, (_, p) => pdfPageSlide(result.files.find((f) => typeOfFile(f) === "pdf")!.blob, p, `${names[result.files.findIndex((f) => typeOfFile(f) === "pdf")] || "Result"} — page ${p + 1}`)), start: page })} />
         )}
         {isImg && beforeUrl && <CompareSlider before={beforeUrl} after={urls[0]} beforeLabel={`Original · ${fmtBytes(items[0].file.size)}`} afterLabel={`Result · ${fmtBytes(result.files[0].blob.size)}`} />}
         {isImg && !beforeUrl && <div className="res-img"><img src={urls[0]} alt="Result preview" onClick={() => setLb({ slides: [{ title: names[0] || result.files[0].name, load: async () => ({ src: urls[0] }) }], start: 0 })} /></div>}
@@ -474,25 +457,29 @@ export function ToolView({ slug }: { slug: string }) {
           <div className="ws-main">
             <div className="ws-bar">
               <span className="ws-count">
-                {tool.pages || tool.editor ? <><b>{items[0].file.name}</b> · {fmtBytes(items[0].file.size)}</> : <><b>{items.length}</b> file{items.length === 1 ? "" : "s"} · {fmtBytes(totalSize)}</>}
+                {special ? <><b>{items[0].file.name}</b> · {fmtBytes(items[0].file.size)}</> : <><b>{items.length}</b> file{items.length === 1 ? "" : "s"} · {fmtBytes(totalSize)}</>}
               </span>
               <span className="grow" />
               {tool.sort && items.length > 1 && <button className="btn btn-secondary btn-sm" onClick={sortByName}><Icon name="swap" size={14} /> Sort {sortAsc ? "A–Z" : "Z–A"}</button>}
               {canRotate && <button className="btn btn-secondary btn-sm" onClick={rotateAll}><Icon name="rotate" size={14} /> Rotate all</button>}
-              {tool.multi && <button className="btn btn-secondary btn-sm" onClick={() => inputRef.current?.click()} title={`Add more (${mod}+O)`}><Icon name="plus" size={14} /> Add more <span className="count">{items.length}</span></button>}
-              {(tool.pages || tool.editor) && <button className="btn btn-ghost btn-sm" onClick={reset}>Change PDF</button>}
+              {tool.multi && !(tool.max && items.length >= tool.max) && <button className="btn btn-secondary btn-sm" onClick={() => inputRef.current?.click()} title={`Add more (${mod}+O)`}><Icon name="plus" size={14} /> Add more <span className="count">{items.length}</span></button>}
+              {special && <button className="btn btn-ghost btn-sm" onClick={reset}>{tool.crop ? "Change photo" : "Change PDF"}</button>}
             </div>
             {notice && <div className="alert warn" role="status">{notice}</div>}
             {tool.sort && items.length > 1 && <p className="ws-hint"><Icon name="grip" size={14} /> Drag to reorder — cards move as you drag. Click a card to preview it. Keyboard: focus a card, then <kbd>Alt</kbd>+<kbd>←</kbd>/<kbd>→</kbd> to move, <kbd>R</kbd> to rotate, <kbd>Del</kbd> to remove.</p>}
 
             {tool.editor ? (
               <PdfEditor file={items[0].file} mode={tool.editor} onChange={setAnns} />
+            ) : tool.crop ? (
+              <CropFrame file={items[0].file} dims={frameDims} onChange={setCrop} />
+            ) : tool.form ? (
+              <FormFiller file={items[0].file} onChange={(v, n) => { setFormValues(v); setFormCount(n); }} onNoFields={() => { setPending([items[0].file]); router.push("/tools/edit-pdf"); }} />
             ) : tool.pages ? (
               <PageGrid file={items[0].file} mode={tool.pages} onChange={setPages} />
             ) : (
               <ul ref={listRef} className={`fgrid${!tool.multi ? " single" : ""}`}>
                 {items.map((it, idx) => (
-                  <FileCard key={it.id} it={it} idx={idx} total={items.length} sort={!!tool.sort} single={!tool.multi} canRotate={canRotate} dragging={draggingId === it.id}
+                  <FileCard key={it.id} it={it} idx={idx} total={items.length} sort={!!tool.sort} single={!tool.multi} canRotate={canRotate} dragging={draggingId === it.id} badge={tool.abLabels ? String.fromCharCode(65 + idx) : undefined}
                     onRemove={() => removeItem(it.id)} onMove={(d) => move(idx, idx + d)} onRotate={() => rotateItem(it.id)} onReplace={() => inputRef.current?.click()} onOpen={() => openFile(idx)}
                     dnd={{
                       draggable: !!tool.sort && items.length > 1,
@@ -501,7 +488,7 @@ export function ToolView({ slug }: { slug: string }) {
                       onDragEnd: () => { dragId.current = null; setDraggingId(null); },
                     }} />
                 ))}
-                {tool.multi && (
+                {tool.multi && !(tool.max && items.length >= tool.max) && (
                   <li className="fc add"><button onClick={() => inputRef.current?.click()}><span><Icon name="plus" size={22} /></span>Add more files</button></li>
                 )}
               </ul>
@@ -511,7 +498,7 @@ export function ToolView({ slug }: { slug: string }) {
           <aside className="ws-side">
             <div className="side-head">
               <h3>{tool.name}</h3>
-              <p>{tool.editor ? "Make your changes on the page, then save." : tool.pages ? "Adjust pages on the left, then save." : tool.sort ? "Set the order and options, then convert." : "Choose your options, then go."}</p>
+              <p>{tool.editor ? "Make your changes on the page, then save." : tool.crop ? "Frame your photo, then save it at the exact size." : tool.form ? "Fill in the fields on the left, then save." : tool.slug === "compare-pdf" ? "Add the original (A) and the new version (B)." : tool.pages ? "Adjust pages on the left, then save." : tool.sort ? "Set the order and options, then convert." : "Choose your options, then go."}</p>
             </div>
             {visibleOpts.length > 0 && (
               <div className="side-opts">

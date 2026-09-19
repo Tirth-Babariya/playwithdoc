@@ -9,6 +9,7 @@ import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 import "./premium.css";
 import "./premium2.css";
+import "./premium3.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -1,4 +1,5 @@
 import { FORMATS, IMAGE_FMTS, type Fmt } from "./formats";
+import { PRESETS } from "./presets";
 import type { Category, OptionSpec, Runner, Tool } from "./types";
 
 export const CATEGORIES: { id: Category; label: string; blurb: string }[] = [
@@ -28,6 +29,8 @@ const imgToPdfOpts: OptionSpec[] = [
 
 const imgRun = (): Promise<Runner> => import("./engines/image").then((m) => m.imagesToPdf);
 const pdfRun = <K extends keyof typeof import("./engines/pdf")>(k: K) => (): Promise<Runner> => import("./engines/pdf").then((m) => m[k] as unknown as Runner);
+
+const PHOTO_FROM: Fmt[] = ["jpg", "png", "webp", "heic", "avif", "bmp", "gif"];
 
 const core: Tool[] = [
   /* ── Organize ── */
@@ -197,6 +200,25 @@ const core: Tool[] = [
     options: [{ key: "mode", label: "Slide type", type: "select", default: "image", options: [{ value: "image", label: "Exact look", hint: "Each page is a full-slide image — identical, not editable" }, { value: "text", label: "Editable text", hint: "Text boxes at original positions — no images" }] }],
     run: () => import("./engines/pptx").then((m) => m.pdfToPptx) }),
 
+  /* ── Forms, comparing, spreadsheets ── */
+  def({ slug: "fill-pdf-form", name: "Fill PDF form", cat: "edit", from: ["pdf"], to: "pdf", multi: false, form: true, featured: true,
+    short: "Fill in fields, tick boxes and pick options.", desc: "Fill in fillable PDF forms — text boxes, check boxes, radio buttons and drop-downs — right in your browser, then save. Nothing is uploaded.",
+    keywords: ["form", "fillable", "acroform", "fill in", "checkbox", "application", "questionnaire", "tax form"],
+    options: [{ key: "flatten", label: "When saving", type: "select", default: "no", options: [{ value: "no", label: "Keep editable" }, { value: "yes", label: "Lock in place", hint: "Turns the answers into fixed text so they can't be changed" }] }],
+    run: () => import("./engines/forms").then((m) => m.fillForm) }),
+  def({ slug: "compare-pdf", name: "Compare PDFs", cat: "edit", from: ["pdf"], to: ["pdf"], multi: true, sort: true, max: 2, abLabels: true, featured: true,
+    short: "See exactly what changed between two versions.", desc: "Compare two PDFs page by page. Get a report with the changes highlighted in red and a list of words that were added or removed.",
+    keywords: ["diff", "difference", "changes", "versions", "redline", "compare documents", "what changed"],
+    run: () => import("./engines/compare").then((m) => m.comparePdf) }),
+  def({ slug: "pdf-to-excel", name: "PDF to Excel", cat: "from-pdf", from: ["pdf"], to: "xlsx", multi: true, featured: true,
+    short: "Pull tables out of a PDF into a spreadsheet.", desc: "Convert tables in text-based PDFs into an Excel workbook. Columns are detected from where the text sits, and numbers become real numbers.",
+    keywords: ["xls", "xlsx", "spreadsheet", "table", "extract table", "statement", "invoice"],
+    options: [
+      { key: "layout", label: "Sheets", type: "select", default: "pages", options: [{ value: "pages", label: "One per page" }, { value: "single", label: "All in one" }] },
+      { key: "numbers", label: "Numbers", type: "select", default: "yes", options: [{ value: "yes", label: "Convert to numbers" }, { value: "no", label: "Keep as text" }], help: "Turns things like 1,250.00 or 12% into real numbers you can calculate with." },
+    ],
+    run: () => import("./engines/table").then((m) => m.pdfToExcel) }),
+
   /* ── Images ── */
   def({ slug: "compress-image", name: "Compress image", cat: "image", from: ["jpg", "png", "webp"], to: ["jpg", "png", "webp"], multi: true, featured: true, estimate: true,
     short: "Shrink JPG, PNG & WebP with no fuss.", desc: "Compress images in bulk while keeping them sharp. Optionally downscale or switch to WebP.",
@@ -214,6 +236,35 @@ const core: Tool[] = [
       { key: "width", label: "Width", type: "number", min: 0, default: 0, suffix: "px", help: "0 = automatic" },
       { key: "height", label: "Height", type: "number", min: 0, default: 0, suffix: "px", help: "0 = automatic" },
     ], run: () => import("./engines/image").then((m) => m.resizeImages) }),
+
+  /* ── Photo & signature presets ── */
+  def({ slug: "photo-resizer", name: "Photo & signature resizer", cat: "image", from: PHOTO_FROM, to: ["jpg", "png"], multi: false, crop: true, featured: true,
+    short: "Exact sizes and file limits for online forms.", desc: "Pick a ready-made size — passport photo, visa photo, signature under 20 KB — or set your own. Position your photo in the frame and save a file that fits the form.",
+    keywords: ["passport", "visa", "photo size", "signature", "under 20kb", "under 50kb", "form upload", "id photo", "exam", "application"],
+    options: [
+      { key: "preset", label: "Size", type: "select", default: "passport", options: PRESETS.map((p) => ({ value: p.id, label: p.label })) },
+      { key: "w", label: "Width", type: "number", min: 20, max: 4000, default: 600, suffix: "px", showWhen: (o) => o.preset === "custom" },
+      { key: "h", label: "Height", type: "number", min: 20, max: 4000, default: 600, suffix: "px", showWhen: (o) => o.preset === "custom" },
+      { key: "maxKb", label: "Max file size", type: "number", min: 0, default: 100, suffix: "KB", help: "0 = no limit", showWhen: (o) => o.preset === "custom" },
+      { key: "format", label: "Format", type: "select", default: "jpg", showWhen: (o) => o.preset === "custom", options: [{ value: "jpg", label: "JPG" }, { value: "png", label: "PNG" }, { value: "webp", label: "WebP" }] },
+      { key: "clean", label: "Clean signature", type: "select", default: "yes", showWhen: (o) => String(o.preset).startsWith("signature"), options: [{ value: "yes", label: "Whiten paper" }, { value: "no", label: "Off" }], help: "Turns a photo of a signature into crisp dark ink on white." },
+    ], run: () => import("./engines/photo").then((m) => m.presetImage) }),
+  def({ slug: "passport-photo", name: "Passport photo maker", cat: "image", from: PHOTO_FROM, to: ["jpg"], multi: false, crop: true, presetId: "passport", featured: true,
+    short: "35×45 mm passport photo, under 200 KB.", desc: "Frame your photo to the standard 35×45 mm passport size (413×531 px) and keep the file under 200 KB. Guides help you centre your face.",
+    keywords: ["passport photo", "35x45", "id photo", "visa photo", "photo booth", "biometric"], run: () => import("./engines/photo").then((m) => m.presetImage) }),
+  def({ slug: "us-visa-photo", name: "US visa / passport photo", cat: "image", from: PHOTO_FROM, to: ["jpg"], multi: false, crop: true, presetId: "us-visa",
+    short: "2×2 inch square photo, 600×600 px.", desc: "Make the 2×2 inch (600×600 px) square photo used for US passports and visas, under 240 KB.",
+    keywords: ["us visa", "2x2", "square photo", "green card", "dv lottery", "usa passport"], run: () => import("./engines/photo").then((m) => m.presetImage) }),
+  def({ slug: "signature-resizer", name: "Signature resizer", cat: "image", from: PHOTO_FROM, to: ["jpg"], multi: false, crop: true, presetId: "signature", featured: true,
+    short: "Signature under 20 KB, clean on white.", desc: "Turn a photo of your signature into a small, clean image — 140×60 px under 20 KB or 300×100 px under 30 KB — ready for form uploads.",
+    keywords: ["signature", "sign", "under 20kb", "esignature", "resize signature", "signature photo"],
+    options: [
+      { key: "preset", label: "Size", type: "select", default: "signature", options: [{ value: "signature", label: "140×60 px · under 20 KB" }, { value: "signature-wide", label: "300×100 px · under 30 KB" }] },
+      { key: "clean", label: "Clean signature", type: "select", default: "yes", options: [{ value: "yes", label: "Whiten paper" }, { value: "no", label: "Off" }] },
+    ], run: () => import("./engines/photo").then((m) => m.presetImage) }),
+  def({ slug: "profile-picture", name: "Profile picture maker", cat: "image", from: PHOTO_FROM, to: ["jpg"], multi: false, crop: true, presetId: "profile",
+    short: "Square 400×400 avatar, under 100 KB.", desc: "Crop a photo to a square 400×400 px profile picture and keep it under 100 KB.",
+    keywords: ["avatar", "profile photo", "square", "dp", "profile pic"], run: () => import("./engines/photo").then((m) => m.presetImage) }),
 ];
 
 /* Every image → image conversion (jpg/png/webp targets). */
@@ -256,4 +307,4 @@ export function toolsForFormat(f: Fmt): Tool[] {
 }
 
 /** Roadmap items — shown honestly in the UI, never listed as working. */
-export const ROADMAP = ["Fillable PDF forms", "Compare two PDFs", "PDF ⇄ Excel", "PDF/A archiving", "Background-thread processing for huge files"];
+export const ROADMAP = ["PDF/A archiving (needs a proper validator)", "Background-thread processing for huge files", "More languages for the interface"];
