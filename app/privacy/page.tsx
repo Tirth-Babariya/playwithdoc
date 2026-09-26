@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Privacy",
-  description: "PlayWithDoc processes your files on your own device. Nothing is uploaded, and there are no accounts, ads or analytics.",
-};
+export const metadata: Metadata = pageMeta({ path: "/privacy", title: "Privacy", description: "PlayWithDoc processes your files on your own device. Nothing is uploaded, and there are no accounts, ads or analytics." });
 
 export default function Privacy() {
   return (

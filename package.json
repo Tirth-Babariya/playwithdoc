@@ -15,10 +15,12 @@
   "dependencies": {
     "@neslinesli93/qpdf-wasm": "^0.3.0",
     "geist": "^1.7.2",
+    "jsqr": "^1.4.0",
     "jszip": "^3.10.2",
     "marked": "^18.0.14",
     "next": "^16.3.5",
     "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tesseract.js": "^7.0.0",
@@ -27,6 +29,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/turndown": "^5.0.6",

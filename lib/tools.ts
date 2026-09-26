@@ -1,3 +1,4 @@
+import { UserError } from "./engines/common";
 import { FORMATS, IMAGE_FMTS, type Fmt } from "./formats";
 import { PRESETS } from "./presets";
 import type { Category, OptionSpec, Runner, Tool } from "./types";
@@ -11,6 +12,7 @@ export const CATEGORIES: { id: Category; label: string; blurb: string }[] = [
   { id: "security", label: "Security", blurb: "Sign, protect, unlock and redact." },
   { id: "image", label: "Images", blurb: "Convert, compress and resize any image." },
   { id: "markdown", label: "Markdown", blurb: "Markdown ⇄ PDF, Word and HTML." },
+  { id: "utility", label: "QR & properties", blurb: "Make and read QR codes, check and clean document properties." },
   { id: "data", label: "Data", blurb: "Spreadsheets and structured data." },
 ];
 
@@ -319,7 +321,20 @@ const data: Tool[] = [
   def({ slug: "excel-to-json", name: "Excel to JSON", cat: "data", from: ["xlsx"], to: "json", multi: true, short: "XLSX sheets to JSON.", desc: "Export every sheet of an Excel workbook as JSON.", keywords: ["xls", "xlsx", "spreadsheet", "developer"], run: async () => (f, c) => import("./engines/data").then((m) => m.xlsxTo(f, c, "json")) }),
 ];
 
-export const TOOLS: Tool[] = [...core, ...imageConversions, ...data];
+const noRun = (name: string) => async (): Promise<Runner> => async () => { throw new UserError(`${name} works on its own page — open it from the tool page.`); };
+const utilities: Tool[] = [
+  def({ slug: "qr-code-generator", name: "QR code maker", cat: "utility", from: [], to: "png", multi: false, custom: "qr-maker", flow: ["TEXT", "QR"], featured: true,
+    short: "QR codes for links, Wi-Fi, contacts and more.", desc: "Make a QR code for a link, Wi-Fi network, contact card, email, phone number or location. Pick colours, dot shapes and a logo, then download PNG or SVG.",
+    keywords: ["qr", "qrcode", "barcode", "wifi qr", "vcard", "link", "generator", "create"], run: noRun("The QR code maker") }),
+  def({ slug: "qr-code-reader", name: "QR code reader", cat: "utility", from: IMAGE_FMTS.filter((f) => f !== "svg" && f !== "heic"), to: "txt", multi: true, custom: "qr-reader", flow: ["QR", "TEXT"], featured: true,
+    short: "Scan a QR code from an image or your camera.", desc: "Read a QR code from a picture, a screenshot or your live camera. See what's inside — link, Wi-Fi details, contact card — before you open anything.",
+    keywords: ["qr", "scan", "scanner", "decode", "barcode", "read qr", "camera"], run: noRun("The QR code reader") }),
+  def({ slug: "document-properties", name: "Document properties", cat: "utility", from: ["pdf", "docx", "xlsx", "pptx", "jpg"], to: ["pdf", "docx", "xlsx", "pptx", "jpg"], multi: false, custom: "metadata", flow: ["FILE", "INFO"], featured: true,
+    short: "See who made a file, then edit or remove it.", desc: "Check a PDF, Word, Excel, PowerPoint or JPG for its author, the program that created it, dates and hidden details like GPS location. Edit the fields or remove all metadata.",
+    keywords: ["metadata", "properties", "author", "producer", "creator", "exif", "gps", "info", "remove metadata", "who made", "generator", "strip"], run: () => import("./engines/meta").then((m) => m.stripAll) }),
+];
+
+export const TOOLS: Tool[] = [...core, ...imageConversions, ...data, ...utilities];
 
 const AUTORUN = new Set(["md-to-pdf", "md-to-word", "word-to-md", "md-to-html", "html-to-md", "md-to-txt", "pdf-to-word", "pdf-to-text", "pdf-to-markdown", "repair-pdf", "word-to-pdf", "csv-to-json", "json-to-csv", "excel-to-csv", "excel-to-json", "excel-to-pdf", "html-to-pdf"]);
 for (const t of TOOLS) if (AUTORUN.has(t.slug) || (t.cat === "image" && /^[a-z]+-to-[a-z]+$/.test(t.slug) && t.from.length === 1)) t.autorun = true;

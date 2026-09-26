@@ -5,9 +5,13 @@ import { FlowChips } from "@/components/FormatChip";
 import { Icon } from "@/components/Icon";
 import { ToolCard } from "@/components/ToolCard";
 import { NetBadge } from "@/components/NetBadge";
+import { MetaPanel } from "@/components/MetaPanel";
+import { QrMaker } from "@/components/QrMaker";
+import { QrReader } from "@/components/QrReader";
 import { ToolView } from "@/components/ToolView";
 import { guidesForTool } from "@/lib/guides";
 import { helpFor, jsonLd } from "@/lib/help";
+import { pageMeta } from "@/lib/seo";
 import { getTool, TOOLS } from "@/lib/tools";
 
 export const dynamicParams = false;
@@ -19,11 +23,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const t = getTool((await params).slug);
   if (!t) return {};
-  return {
+  return pageMeta({
+    path: `/tools/${t.slug}`,
     title: `${t.name} — free, private, no upload`,
     description: `${t.desc} Free, no sign-up, and your files never leave your device.`,
-    openGraph: { title: `${t.name} · PlayWithDoc`, description: t.short },
-  };
+    ogTitle: `${t.name} · PlayWithDoc`,
+  });
 }
 
 export default async function ToolPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -40,12 +45,12 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <Link href="/">PlayWithDoc</Link><Icon name="arrow" size={11} /><Link href="/#tools">Tools</Link><Icon name="arrow" size={11} /><span>{tool.name}</span>
       </nav>
       <header className="tool-head">
-        <FlowChips from={tool.from} to={tool.to} size="lg" />
+        <FlowChips from={tool.from} to={tool.to} flow={tool.flow} size="lg" />
         <h1>{tool.name}</h1>
         <p className="lead">{tool.desc}</p>
       </header>
 
-      <ToolView slug={tool.slug} />
+      {tool.custom === "qr-maker" ? <QrMaker /> : tool.custom === "qr-reader" ? <QrReader /> : tool.custom === "metadata" ? <MetaPanel /> : <ToolView slug={tool.slug} />}
 
       <div className="assure">
         <span><Icon name="lock" size={15} /> Never uploaded</span>
@@ -55,6 +60,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <NetBadge />
       </div>
 
+      {!tool.custom && (
       <section className="how">
         <h2>How it works</h2>
         <ol>
@@ -63,6 +69,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           <li><b>Download</b><span>Save the result, or send it straight into another tool.</span></li>
         </ol>
       </section>
+      )}
 
       <section className="about">
         <h2>About {tool.name}</h2>

@@ -16,6 +16,8 @@ each of which keeps its own license. They are listed here with thanks.
 | [SheetJS Community Edition](https://sheetjs.com) (v0.18.5) | Reading Excel and CSV files | Apache-2.0 |
 | [marked](https://github.com/markedjs/marked) | Reading Markdown | MIT |
 | [Turndown](https://github.com/mixmark-io/turndown) + [turndown-plugin-gfm](https://github.com/mixmark-io/turndown-plugin-gfm) | Converting HTML and Word to Markdown | MIT |
+| [qrcode](https://github.com/soldair/node-qrcode) | Building QR codes | MIT |
+| [jsQR](https://github.com/cozmo/jsQR) | Reading QR codes | Apache-2.0 |
 | [heic2any](https://github.com/alexcorvi/heic2any) | Decoding iPhone HEIC photos (bundles libheif) | MIT (libheif: LGPL-3.0) |
 | [Geist](https://vercel.com/font) | Typeface | SIL Open Font License 1.1 |
 

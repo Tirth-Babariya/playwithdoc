@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { FlowChips } from "@/components/FormatChip";
 import { Icon, toolIcon } from "@/components/Icon";
 import { GUIDES } from "@/lib/guides";
 import { getTool } from "@/lib/tools";
 
-export const metadata: Metadata = {
-  title: "How-to guides — PDFs, photos and forms",
-  description: "Short, practical guides: reduce a PDF to under 200 KB, sign a PDF without uploading it, make a passport photo, fill a form, and more. Free and private.",
-};
+export const metadata: Metadata = pageMeta({ path: "/guides", title: "How-to guides — PDFs, photos and forms", description: "Short, practical guides: reduce a PDF to under 200 KB, sign a PDF without uploading it, make a passport photo, fill a form, and more. Free and private." });
 
 export default function GuidesIndex() {
   return (
@@ -27,7 +25,7 @@ export default function GuidesIndex() {
             <Link key={g.slug} href={`/guides/${g.slug}`} className="card guide-card">
               <span className="tool-top">
                 <span className="tool-ico"><Icon name={toolIcon(t.slug, t.cat)} size={18} /></span>
-                <FlowChips from={t.from} to={t.to} size="sm" />
+                <FlowChips from={t.from} to={t.to} flow={t.flow} size="sm" />
               </span>
               <b>{g.title}</b>
               <span className="muted">{g.description}</span>

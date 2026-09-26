@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { ProveIt } from "@/components/ProveIt";
 
-export const metadata: Metadata = {
-  title: "Prove it — your files never leave your device",
-  description: "Don’t take our word for it. A live demo of how PlayWithDoc works with no uploads: watch the network, give it a file, and try to make it send data away.",
-};
+export const metadata: Metadata = pageMeta({ path: "/prove-it", title: "Prove it — your files never leave your device", description: "Don’t take our word for it. A live demo of how PlayWithDoc works with no uploads: watch the network, give it a file, and try to make it send data away." });
 
 export default function ProveItPage() {
   return (

@@ -11,8 +11,15 @@ export function FormatChip({ f, size = "md" }: { f: Fmt; size?: "sm" | "md" | "l
   );
 }
 
-export function FlowChips({ from, to, size = "md" }: { from: Fmt[]; to: Fmt[]; size?: "sm" | "md" | "lg" }) {
+export function FlowChips({ from, to, size = "md", flow }: { from: Fmt[]; to: Fmt[]; size?: "sm" | "md" | "lg"; flow?: [string, string] }) {
   const many = from.length > 2;
+  if (flow) return (
+    <span className="flow">
+      <span className="chip chip-sm chip-any">{flow[0]}</span>
+      <Icon name="arrow" size={size === "lg" ? 16 : 12} className="flow-arrow" />
+      <span className="chip chip-sm chip-any">{flow[1]}</span>
+    </span>
+  );
   return (
     <span className="flow">
       {many ? <span className="chip chip-sm chip-any">ANY IMAGE</span> : from.map((f) => <FormatChip key={f} f={f} size={size} />)}

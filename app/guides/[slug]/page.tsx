@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/Icon";
 import { GUIDES, getGuide } from "@/lib/guides";
+import { pageMeta } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { getTool } from "@/lib/tools";
 
@@ -15,7 +16,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const g = getGuide((await params).slug);
   if (!g) return {};
-  return { title: g.title, description: g.description, openGraph: { title: g.title, description: g.description, type: "article" } };
+  return pageMeta({ path: `/guides/${g.slug}`, title: g.title, description: g.description, ogTitle: `${g.title} · PlayWithDoc`, type: "article" });
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {

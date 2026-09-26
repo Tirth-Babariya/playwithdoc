@@ -12,8 +12,8 @@ export function generateStaticParams() {
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const t = getTool((await params).slug)!;
-  const from = t.from.length > 2 ? "ANY" : t.from.map((f) => FORMATS[f].label).join(" ");
-  const to = t.to.length > 2 ? "ANY" : t.to.map((f) => FORMATS[f].label).join(" ");
+  const from = t.flow ? t.flow[0] : t.from.length > 2 ? "ANY" : t.from.map((f) => FORMATS[f].label).join(" ");
+  const to = t.flow ? t.flow[1] : t.to.length > 2 ? "ANY" : t.to.map((f) => FORMATS[f].label).join(" ");
   const chip = (s: string) => <div style={{ padding: "12px 26px", borderRadius: 18, background: "#1f1f24", border: "2px solid #3a3a44", fontSize: 44, fontWeight: 700, color: "#fff" }}>{s}</div>;
   return new ImageResponse(
     (

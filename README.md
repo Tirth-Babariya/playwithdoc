@@ -81,7 +81,7 @@ Your files **never leave your device**. Everything is processed by your browser.
 
 ## What you can do
 
-**76 tools**, all free, all local.
+**79 tools**, all free, all local.
 
 | | |
 |---|---|
@@ -93,6 +93,7 @@ Your files **never leave your device**. Everything is processed by your browser.
 | **Security** | **Sign PDF** (draw / type / upload) · **Protect** (AES‑256) · **Unlock** · **Redact** (truly removes text) |
 | **Images** | 21 image ⇄ image conversions (JPG, PNG, WebP, GIF, BMP, AVIF, HEIC, SVG) · Compress (**under 100 KB**) · Resize · **Photo & signature presets** (passport, visa, signature under 20 KB) |
 | **Markdown** | Markdown → **PDF · Word · HTML · text** · **Word → Markdown** · **HTML → Markdown** · PDF → Markdown |
+| **QR & properties** | **QR code maker** (link, Wi‑Fi, contact, email, phone, SMS, location · 10 ready-made designs, dot shapes, round or square corner markers and image corners, a name above or below, logo, PNG/SVG) · **QR code reader** (image, pasted screenshot or camera) · **Document properties** (see who/what made a PDF, Word, Excel, PowerPoint or JPG — edit it or remove it, including photo GPS) |
 | **Data** | CSV ⇄ JSON · Excel → CSV / JSON |
 
 ### Little things that feel good
@@ -127,7 +128,8 @@ Start from a ready-made recipe — *Email-ready PDF*, *Scans → searchable & sm
 
 ## Guides and proof
 
-- **How-to guides** — 18 short, step-by-step articles for the things people search for most ("Reduce a PDF to under 200 KB", "Sign a PDF without uploading it", "Make a passport photo at home"…). Each ends at the tool that does the job, has FAQ and search-engine structured data, and links to related guides.
+- **What’s new** (`/whats-new`) — a changelog with an Atom feed, a small dot in the nav when there is something you haven’t seen, and “New” badges on fresh tools.
+- **How-to guides** — 21 short, step-by-step articles for the things people search for most ("Reduce a PDF to under 200 KB", "Sign a PDF without uploading it", "Make a passport photo at home"…). Each ends at the tool that does the job, has FAQ and search-engine structured data, and links to related guides.
 - **Prove it** (`/prove-it`) — a live demonstration instead of a promise: a running count of every network request the page makes (other websites: 0), a demo that reads a file you choose and shows nothing left the tab, a button that *tries* to send data to another site so you can watch the browser block it, and the actual security policy read from the server. It ends with four ways to check it yourself, and an honest list of what can't be promised.
 
 ## Keyboard

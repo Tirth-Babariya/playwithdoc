@@ -56,6 +56,9 @@ const P: Record<string, React.ReactNode> = {
   infinity: <path d="M18.2 8.2c-3.2 0-4.7 3.8-6.2 3.8S9 8.2 5.8 8.2a3.8 3.8 0 0 0 0 7.6c3.2 0 4.7-3.8 6.2-3.8s3 3.8 6.2 3.8a3.8 3.8 0 0 0 0-7.6Z" />,
   user: <><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></>,
   minus: <path d="M5 12h14" />,
+  qr: <><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3M21 14v.01M14 21h3M21 17v4M17 21v-1" /></>,
+  info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 7.5v.01" /></>,
+  bell: <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7ZM10 20a2 2 0 0 0 4 0" />,
   cpu: <><rect x="6" y="6" width="12" height="12" rx="2" /><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" /></>,
 };
 
@@ -68,6 +71,7 @@ export function Icon({ name, size = 18, ...rest }: { name: string; size?: number
 }
 
 const SLUG_ICON: Record<string, string> = {
+  "qr-code-generator": "qr", "qr-code-reader": "qr", "document-properties": "info", "whats-new": "bell",
   "merge-pdf": "layers", "split-pdf": "scissors", "remove-pages": "trash", "extract-pages": "extract", "organize-pdf": "grid",
   "scan-to-pdf": "camera", "compress-pdf": "minimize", "repair-pdf": "wrench", "word-to-pdf": "file", "excel-to-pdf": "table",
   "html-to-pdf": "code", "txt-to-pdf": "file", "pdf-to-word": "file", "pdf-to-text": "file", "pdf-to-markdown": "hash",

@@ -83,7 +83,7 @@ export function UniversalDrop() {
                   <button key={t.slug} className="ud-item" onClick={() => go(t.slug)}>
                     <Icon name={toolIcon(t.slug, t.cat)} size={17} />
                     <span><b>{t.name}</b><small>{t.short}</small></span>
-                    <FlowChips from={t.from} to={t.to} size="sm" />
+                    <FlowChips from={t.from} to={t.to} flow={t.flow} size="sm" />
                   </button>
                 ))}
               </div>

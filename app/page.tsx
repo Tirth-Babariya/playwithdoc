@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
 import { FormatChip } from "@/components/FormatChip";
 import { Hero } from "@/components/Hero";
 import { Icon } from "@/components/Icon";
 import { ToolExplorer } from "@/components/ToolExplorer";
 import { UniversalDrop } from "@/components/UniversalDrop";
 import { FORMATS, type Fmt } from "@/lib/formats";
+import { SITE_NAME } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 import { ROADMAP, TOOLS } from "@/lib/tools";
 
 const MARQUEE = (Object.keys(FORMATS) as Fmt[]).filter((f) => f !== "zip");
@@ -25,10 +28,30 @@ const STEPS = [
   ["03", "Enter. Done.", "Sensible defaults mean most conversions start instantly and finish in seconds."],
 ];
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { title: "PlayWithDoc — Convert anything to anything. Privately.", description: "Every PDF and image tool, free, private and one keystroke away.", url: "/", siteName: SITE_NAME, type: "website" },
+};
+
 export default function Home() {
   const nTools = TOOLS.length;
+  const ld = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: SITE_NAME, inLanguage: "en", description: "Free PDF, image and document tools that run entirely in your browser — nothing is uploaded." },
+      {
+        "@type": "WebApplication", "@id": `${SITE_URL}/#app`, name: SITE_NAME, url: SITE_URL, applicationCategory: "UtilitiesApplication", operatingSystem: "Any (web browser)",
+        browserRequirements: "Requires JavaScript", isAccessibleForFree: true, offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        description: `${nTools} free PDF, image and document tools that work offline and never upload your files.`,
+        featureList: ["Merge, split and compress PDFs", "Sign, fill and redact PDFs", "OCR for scanned documents", "Word, Excel, PowerPoint and Markdown conversion", "Passport photo and signature size presets", "Works offline", "No uploads, no sign-up"],
+        author: { "@type": "Person", name: "Tirth Babariya", url: "https://github.com/Tirth-Babariya/" },
+      },
+      { "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
+    ],
+  };
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <Hero />
       <UniversalDrop />
 

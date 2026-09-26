@@ -27,7 +27,7 @@ export type OptionSpec =
   | (Base & { type: "text"; placeholder?: string; default?: string; secret?: boolean })
   | (Base & { type: "number"; min?: number; max?: number; default: number; suffix?: string });
 
-export type Category = "organize" | "optimize" | "to-pdf" | "from-pdf" | "edit" | "security" | "image" | "data" | "markdown";
+export type Category = "organize" | "optimize" | "to-pdf" | "from-pdf" | "edit" | "security" | "image" | "data" | "markdown" | "utility";
 
 export type Tool = {
   slug: string;
@@ -59,6 +59,10 @@ export type Tool = {
   max?: number;
   /** Label the file cards A, B… instead of 1, 2… */
   abLabels?: boolean;
+  /** Tool has its own screen instead of the file-in / file-out workspace. */
+  custom?: "qr-maker" | "qr-reader" | "metadata";
+  /** Overrides the format chips on cards ("Text → QR"). */
+  flow?: [string, string];
   keywords: string[];
   featured?: boolean;
   camera?: boolean;

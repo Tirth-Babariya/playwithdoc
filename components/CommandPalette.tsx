@@ -14,6 +14,7 @@ const page = (slug: string, name: string, short: string) => ({ slug, name, short
 const PAGES: { entry: Tool; href: string; words: RegExp }[] = [
   { entry: page("recipes", "Recipes — chain tools", "Merge → compress → protect, saved and re-run in one click"), href: "/recipes", words: /recip|workflow|chain|automat|multi.?step|combo|pipeline|batch|several/i },
   { entry: page("guides", "How-to guides", "Step-by-step: shrink a PDF, sign without uploading, passport photo…"), href: "/guides", words: /guide|how.?to|tutorial|learn|help|steps|explain/i },
+  { entry: page("whats-new", "What’s new", "The newest tools and improvements"), href: "/whats-new", words: /new|update|change|latest|release|changelog|recent/i },
   { entry: page("prove-it", "Prove it — nothing is uploaded", "A live demo of the no-upload, network-locked design"), href: "/prove-it", words: /prove|proof|privacy|private|secure|safe|trust|upload|verify|network/i },
 ];
 const PAGE_HREF = Object.fromEntries(PAGES.map((p) => [p.entry.slug, p.href]));
@@ -100,7 +101,7 @@ function Palette({ initial, onClose, onPick }: { initial: string; onClose: () =>
             <button key={t.slug} data-i={i} role="option" aria-selected={i === active} className={`pal-item${i === active ? " on" : ""}`} onMouseMove={() => setActive(i)} onClick={() => onPick(t.slug)}>
               <span className="pal-ico"><Icon name={!q.trim() && recentSet.has(t.slug) ? "clock" : toolIcon(t.slug, t.cat)} size={17} /></span>
               <span className="pal-txt"><b>{t.name}</b><small>{t.short}</small></span>
-              <FlowChips from={t.from} to={t.to} size="sm" />
+              <FlowChips from={t.from} to={t.to} flow={t.flow} size="sm" />
               {i === active && <kbd className="pal-enter">↵</kbd>}
             </button>
           ))}

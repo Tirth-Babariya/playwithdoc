@@ -5,6 +5,7 @@ import { Icon, Logo } from "./Icon";
 import { usePalette } from "./CommandPalette";
 import { OfflineStatus } from "./OfflineStatus";
 import { ThemeToggle } from "./ThemeToggle";
+import { WhatsNewLink } from "./WhatsNewLink";
 
 export function Header() {
   const { open, mod } = usePalette();
@@ -19,6 +20,7 @@ export function Header() {
           <Link href="/recipes">Recipes</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/prove-it">Prove it</Link>
+          <WhatsNewLink />
         </nav>
         <span className="grow" />
         <button className="hdr-search" onClick={() => open()} aria-label="Search conversions">
@@ -47,7 +49,7 @@ export function Footer() {
         <div className="ftr-cols">
           <div><h4>PDF</h4><Link href="/tools/merge-pdf">Merge</Link><Link href="/tools/split-pdf">Split</Link><Link href="/tools/compress-pdf">Compress</Link><Link href="/tools/organize-pdf">Organize</Link></div>
           <div><h4>Convert</h4><Link href="/tools/jpg-to-pdf">JPG to PDF</Link><Link href="/tools/word-to-pdf">Word to PDF</Link><Link href="/tools/pdf-to-word">PDF to Word</Link><Link href="/tools/pdf-to-jpg">PDF to JPG</Link></div>
-          <div><h4>Learn</h4><Link href="/guides">How-to guides</Link><Link href="/prove-it">Prove it</Link><Link href="/recipes">Recipes</Link><Link href="/privacy">Privacy</Link></div>
+          <div><h4>Learn</h4><Link href="/guides">How-to guides</Link><Link href="/prove-it">Prove it</Link><Link href="/recipes">Recipes</Link><Link href="/whats-new">What’s new</Link><Link href="/privacy">Privacy</Link></div>
           <div><h4>Images</h4><Link href="/tools/heic-to-jpg">HEIC to JPG</Link><Link href="/tools/png-to-jpg">PNG to JPG</Link><Link href="/tools/webp-to-png">WEBP to PNG</Link><Link href="/tools/compress-image">Compress image</Link></div>
         </div>
       </div>

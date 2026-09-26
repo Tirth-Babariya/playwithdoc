@@ -290,7 +290,19 @@ async function turndown() {
   return td;
 }
 
-const tidy = (md: string) => md.replace(/[ \t]+$/gm, "").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+/** Turndown pads list markers ("-   item"); make them "- item" and squash blank runs — without touching fenced code. */
+function tidy(md: string): string {
+  const out: string[] = [];
+  let fence = false, blanks = 0;
+  for (const raw of md.split("\n")) {
+    if (/^\s*(```|~~~)/.test(raw)) { fence = !fence; blanks = 0; out.push(raw.replace(/[ \t]+$/, "")); continue; }
+    if (fence) { out.push(raw); continue; }
+    const line = raw.replace(/[ \t]+$/, "").replace(/^(\s*)([-*+])\s{2,}(?=\S)/, "$1$2 ").replace(/^(\s*)(\d+\.)\s{2,}(?=\S)/, "$1$2 ");
+    blanks = line === "" ? blanks + 1 : 0;
+    if (blanks <= 1) out.push(line);
+  }
+  return out.join("\n").trim() + "\n";
+}
 
 export async function htmlToMd(files: File[], ctx: Ctx): Promise<Result> {
   const td = await turndown();
@@ -318,7 +330,14 @@ export async function wordToMd(files: File[], ctx: Ctx): Promise<Result> {
     ctx.progress(i / files.length, `Converting ${files[i].name}`);
     const stem = baseName(files[i].name);
     let html: string;
-    try { html = (await m.convertToHtml({ arrayBuffer: await files[i].arrayBuffer() })).value; }
+    try {
+      html = (await m.convertToHtml({ arrayBuffer: await files[i].arrayBuffer() }, {
+        styleMap: [
+          "p[style-name='Code'] => pre:separator('\n')", "p[style-name='Source Code'] => pre:separator('\n')", "p[style-name='Code Block'] => pre:separator('\n')",
+          "r[style-name='Code Char'] => code", "r[style-name='Source Code Char'] => code", "r[style-name='HTML Code'] => code", "r[style-name='Verbatim Char'] => code",
+        ],
+      })).value;
+    }
     catch { throw new UserError(`“${files[i].name}” isn’t a valid .docx file. For old .doc files, re-save as .docx in Word first.`); }
     const dom = safeDom(html);
 

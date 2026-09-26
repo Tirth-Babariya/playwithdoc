@@ -175,7 +175,7 @@ export function RecipeRunner() {
                   <select value={st.slug} aria-label={`Step ${i + 1} tool`} onChange={(e) => patchStep(st.id, () => makeStep(e.target.value))}>
                     {groups.map((g) => <optgroup key={g.c.id} label={g.c.label}>{g.tools.map((x) => <option key={x.slug} value={x.slug}>{x.name}</option>)}</optgroup>)}
                   </select>
-                  <FlowChips from={t.from} to={t.to} size="sm" />
+                  <FlowChips from={t.from} to={t.to} flow={t.flow} size="sm" />
                   <span className="grow" />
                   <button className="rm" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Move up"><Icon name="up" size={15} /></button>
                   <button className="rm" onClick={() => move(i, 1)} disabled={i === steps.length - 1} aria-label="Move down"><Icon name="down" size={15} /></button>

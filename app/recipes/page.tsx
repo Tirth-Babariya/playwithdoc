@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { RecipeRunner } from "@/components/RecipeRunner";
 
-export const metadata: Metadata = {
-  title: "Recipes — chain PDF tools in one go",
-  description: "Chain steps like merge, compress, watermark and protect into one saved recipe and run it on your files in one click. Everything runs on your device.",
-};
+export const metadata: Metadata = pageMeta({ path: "/recipes", title: "Recipes — chain PDF tools in one go", description: "Chain steps like merge, compress, watermark and protect into one saved recipe and run it on your files in one click. Everything runs on your device." });
 
 export default function RecipesPage() {
   return (
