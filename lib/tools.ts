@@ -10,6 +10,7 @@ export const CATEGORIES: { id: Category; label: string; blurb: string }[] = [
   { id: "edit", label: "Edit", blurb: "Type, draw, rotate, crop, number and watermark." },
   { id: "security", label: "Security", blurb: "Sign, protect, unlock and redact." },
   { id: "image", label: "Images", blurb: "Convert, compress and resize any image." },
+  { id: "markdown", label: "Markdown", blurb: "Markdown ⇄ PDF, Word and HTML." },
   { id: "data", label: "Data", blurb: "Spreadsheets and structured data." },
 ];
 
@@ -97,7 +98,7 @@ const core: Tool[] = [
   def({ slug: "html-to-pdf", name: "HTML to PDF", cat: "to-pdf", from: ["html"], to: "pdf", multi: true,
     short: "HTML files to PDF.", desc: "Convert local HTML files into PDF documents.", keywords: ["web", "page", "htm"], options: [pageSizeOpt, docMargin],
     run: () => import("./engines/docs").then((m) => m.htmlFileToPdf) }),
-  def({ slug: "txt-to-pdf", name: "Text to PDF", cat: "to-pdf", from: ["txt", "md"], to: "pdf", multi: true,
+  def({ slug: "txt-to-pdf", name: "Text to PDF", cat: "to-pdf", from: ["txt"], to: "pdf", multi: true,
     short: "Plain text to a tidy PDF.", desc: "Convert TXT files into PDF with your choice of typeface.", keywords: ["txt", "plain text", "notes", "log"],
     options: [pageSizeOpt, { key: "font", label: "Typeface", type: "select", default: "mono", options: [{ value: "mono", label: "Monospace" }, { value: "sans", label: "Sans" }, { value: "serif", label: "Serif" }] }, { key: "fontSize", label: "Font size", type: "number", min: 6, max: 24, default: 10.5, suffix: "pt" }],
     run: () => import("./engines/docs").then((m) => m.textToPdf) }),
@@ -200,6 +201,31 @@ const core: Tool[] = [
     options: [{ key: "mode", label: "Slide type", type: "select", default: "image", options: [{ value: "image", label: "Exact look", hint: "Each page is a full-slide image — identical, not editable" }, { value: "text", label: "Editable text", hint: "Text boxes at original positions — no images" }] }],
     run: () => import("./engines/pptx").then((m) => m.pdfToPptx) }),
 
+
+  /* ── Markdown ── */
+  def({ slug: "md-to-pdf", name: "Markdown to PDF", cat: "markdown", from: ["md"], to: "pdf", multi: true, featured: true,
+    short: "Turn .md notes and docs into a clean PDF.", desc: "Convert Markdown files to PDF — headings, lists, code blocks, quotes and tables are laid out for you. Perfect for READMEs, notes and documentation.",
+    keywords: ["markdown", "md", "readme", "notes", "documentation", "github", "export"], options: [pageSizeOpt, docMargin],
+    run: () => import("./engines/markdown").then((m) => m.mdToPdf) }),
+  def({ slug: "md-to-word", name: "Markdown to Word", cat: "markdown", from: ["md"], to: "docx", multi: true, featured: true,
+    short: "Markdown to a real, editable .docx.", desc: "Convert Markdown into a Word document with real headings, lists, tables, code blocks and links — ready to edit or share.",
+    keywords: ["markdown", "md", "docx", "word", "microsoft word", "export", "readme"], options: [pageSizeOpt, docMargin],
+    run: () => import("./engines/markdown").then((m) => m.mdToWord) }),
+  def({ slug: "word-to-md", name: "Word to Markdown", cat: "markdown", from: ["docx"], to: "md", multi: true, featured: true,
+    short: "Word documents to clean Markdown.", desc: "Convert a .docx into Markdown: headings, lists, tables, links and emphasis. Pictures are saved as separate files next to it.",
+    keywords: ["markdown", "md", "docx", "word", "microsoft word", "import", "notes", "github"],
+    options: [{ key: "images", label: "Pictures", type: "select", default: "folder", options: [{ value: "folder", label: "Save as files", hint: "Each picture becomes its own image file, linked from the Markdown" }, { value: "skip", label: "Leave out" }, { value: "embed", label: "Embed", hint: "Stored inside the Markdown as base64 — makes the file large" }] }],
+    run: () => import("./engines/markdown").then((m) => m.wordToMd) }),
+  def({ slug: "md-to-html", name: "Markdown to HTML", cat: "markdown", from: ["md"], to: "html", multi: true,
+    short: "A styled, self-contained web page.", desc: "Convert Markdown to a standalone HTML page with tidy styling that follows light and dark mode.",
+    keywords: ["markdown", "md", "html", "web page", "website", "preview", "blog"], run: () => import("./engines/markdown").then((m) => m.mdToHtml) }),
+  def({ slug: "html-to-md", name: "HTML to Markdown", cat: "markdown", from: ["html"], to: "md", multi: true,
+    short: "Web pages to readable Markdown.", desc: "Convert saved HTML pages into Markdown — headings, lists, links, tables and code.",
+    keywords: ["markdown", "md", "html", "web page", "clean", "scrape", "blog", "notes"], run: () => import("./engines/markdown").then((m) => m.htmlToMd) }),
+  def({ slug: "md-to-txt", name: "Markdown to Text", cat: "markdown", from: ["md"], to: "txt", multi: true,
+    short: "Strip the formatting, keep the words.", desc: "Convert Markdown to plain text: formatting marks are removed, lists keep their bullets and links show their address.",
+    keywords: ["markdown", "md", "txt", "plain text", "strip formatting", "remove markdown"], run: () => import("./engines/markdown").then((m) => m.mdToTxt) }),
+
   /* ── Forms, comparing, spreadsheets ── */
   def({ slug: "fill-pdf-form", name: "Fill PDF form", cat: "edit", from: ["pdf"], to: "pdf", multi: false, form: true, featured: true,
     short: "Fill in fields, tick boxes and pick options.", desc: "Fill in fillable PDF forms — text boxes, check boxes, radio buttons and drop-downs — right in your browser, then save. Nothing is uploaded.",
@@ -295,7 +321,7 @@ const data: Tool[] = [
 
 export const TOOLS: Tool[] = [...core, ...imageConversions, ...data];
 
-const AUTORUN = new Set(["pdf-to-word", "pdf-to-text", "pdf-to-markdown", "repair-pdf", "word-to-pdf", "csv-to-json", "json-to-csv", "excel-to-csv", "excel-to-json", "excel-to-pdf", "html-to-pdf"]);
+const AUTORUN = new Set(["md-to-pdf", "md-to-word", "word-to-md", "md-to-html", "html-to-md", "md-to-txt", "pdf-to-word", "pdf-to-text", "pdf-to-markdown", "repair-pdf", "word-to-pdf", "csv-to-json", "json-to-csv", "excel-to-csv", "excel-to-json", "excel-to-pdf", "html-to-pdf"]);
 for (const t of TOOLS) if (AUTORUN.has(t.slug) || (t.cat === "image" && /^[a-z]+-to-[a-z]+$/.test(t.slug) && t.from.length === 1)) t.autorun = true;
 export const TOOL_MAP = new Map(TOOLS.map((t) => [t.slug, t]));
 export const getTool = (slug: string) => TOOL_MAP.get(slug);

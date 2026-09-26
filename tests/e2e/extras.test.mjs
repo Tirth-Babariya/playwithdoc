@@ -42,7 +42,7 @@ async function open(slug, files) {
 
 /** Presses the main button, waits for the result and downloads every output. */
 async function finish(timeout = 90000) {
-  await page.locator("button.run").click();
+  await page.locator("button.run").click({ timeout: 2500 }).catch(() => {}); // tools that start on their own have no button
   await page.waitForSelector(".panel.done, .alert.bad", { timeout });
   if (await page.locator(".alert.bad").count()) return { error: await page.locator(".alert.bad").first().innerText() };
   const links = page.locator(".outs a[download]");
@@ -170,9 +170,58 @@ await page.keyboard.type("recipe");
 await page.waitForTimeout(300);
 ok("Ctrl+K finds Recipes", /Recipes/.test(await page.locator(".pal-item").first().innerText()));
 
+/* ───────── Markdown family ───────── */
+await open("md-to-word", ["notes.md"]);
+r = await finish();
+let docxPath = "";
+if (r.files) {
+  docxPath = r.files[0];
+  const z = await JSZip.loadAsync(fs.readFileSync(docxPath));
+  const xml = await z.file("word/document.xml").async("string");
+  ok("Markdown → Word: real Word headings, table, list and link", /Heading1/.test(xml) && /Project Notes/.test(xml) && /<w:tbl>/.test(xml) && /<w:numPr>/.test(xml) && /<w:hyperlink/.test(xml), xml.length);
+  const wellFormed = await page.evaluate((x) => !new DOMParser().parseFromString(x, "application/xml").querySelector("parsererror"), xml);
+  ok("Markdown → Word: document.xml is well-formed XML", wellFormed);
+  for (const part of ["word/styles.xml", "word/numbering.xml"]) {
+    const ok2 = await page.evaluate((x) => !new DOMParser().parseFromString(x, "application/xml").querySelector("parsererror"), await z.file(part).async("string"));
+    ok(`Markdown → Word: ${part} is well-formed XML`, ok2);
+  }
+} else ok("Markdown → Word produced a file", false, r.error);
+
+if (docxPath) {
+  await open("word-to-md", [docxPath]);
+  r = await finish();
+  const md = r.files ? fs.readFileSync(r.files[0], "utf8") : "";
+  ok("Word → Markdown: heading, bold, list and table survive a round trip", /^# Project Notes/m.test(md) && /\*\*bold\*\*/.test(md) && /^- First item/m.test(md) && /\| Name \| Qty \|/.test(md) && /\| ?-+/.test(md), r.error || md.slice(0, 120).replace(/\n/g, " ⏎ "));
+}
+
+await open("md-to-pdf", ["notes.md"]);
+r = await finish();
+if (r.files) {
+  ok("Markdown → PDF made a PDF", (await PDFDocument.load(fs.readFileSync(r.files[0]))).getPageCount() >= 1);
+  await open("pdf-to-text", [r.files[0]]);
+  const t = await finish();
+  const text = t.files ? fs.readFileSync(t.files[0], "utf8") : "";
+  ok("Markdown → PDF: the text is in the PDF (heading, list, table)", /Project Notes/.test(text) && /First item/.test(text) && /Pen/.test(text), t.error || text.slice(0, 100).replace(/\n/g, " "));
+} else ok("Markdown → PDF produced a file", false, r.error);
+
+await open("md-to-html", ["notes.md"]);
+r = await finish();
+const html = r.files ? fs.readFileSync(r.files[0], "utf8") : "";
+ok("Markdown → HTML: a full page with heading and table", /<h1[^>]*>Project Notes/.test(html) && /<table>/.test(html) && /<!doctype html>/i.test(html), r.error || html.slice(0, 60));
+
+await open("md-to-txt", ["notes.md"]);
+r = await finish();
+const plain = r.files ? fs.readFileSync(r.files[0], "utf8") : "";
+ok("Markdown → Text: words kept, formatting marks removed", /PROJECT NOTES/.test(plain) && !/\*\*|^#/m.test(plain) && /bold/.test(plain), r.error || plain.slice(0, 80).replace(/\n/g, " "));
+
+await open("html-to-md", [path.join(fx, "page.html")]);
+r = await finish();
+const back = r.files ? fs.readFileSync(r.files[0], "utf8") : "";
+ok("HTML → Markdown: heading, list and link", /^# Hello/m.test(back) && /^- one/m.test(back) && /\[site\]\(https:\/\/example\.com\/?\)/.test(back), r.error || back.slice(0, 100).replace(/\n/g, " "));
+
 /* ───────── How-to guides ───────── */
 await page.goto(`${BASE}/guides`);
-ok("guides index lists all 16 guides", (await page.locator(".guide-card").count()) === 16, await page.locator(".guide-card").count());
+ok("guides index lists all 18 guides", (await page.locator(".guide-card").count()) === 18, await page.locator(".guide-card").count());
 await page.goto(`${BASE}/guides/reduce-pdf-size-under-200kb`);
 ok("guide shows its 5 steps", (await page.locator(".guide-steps li").count()) === 5);
 ok("guide leads to the tool", (await page.locator(".guide-short a.btn").getAttribute("href")) === "/tools/compress-pdf");

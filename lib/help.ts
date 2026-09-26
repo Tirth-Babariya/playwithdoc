@@ -17,6 +17,9 @@ const TIPS: Record<string, string[]> = {
   "fill-pdf-form": ["Only fields you change are written to the file.", "“Lock in place” makes the answers permanent text — good before sending the form on.", "No fields found? The PDF is flat; use Edit PDF to type on it instead."],
   "compare-pdf": ["Put the older version first (A) and the newer second (B) — drag the cards to swap them.", "Works best on text documents; changed words are listed and changed areas are marked in red.", "Scanned documents are compared by how the page looks, since they contain no text."],
   "pdf-to-excel": ["This works on PDFs with real text (bank statements, invoices, reports). For scans, run OCR PDF first.", "Columns are inferred from where text sits, so check merged headers and unusual cells.", "Choose “All in one” to get a single continuous sheet across pages."],
+  "md-to-pdf": ["Great for READMEs, notes and documentation — headings, lists, code blocks, quotes and tables are all laid out.", "Images and links to other pages aren't included in the PDF.", "Want it editable instead? Try Markdown to Word."],
+  "md-to-word": ["Headings become real Word headings, so the navigation pane and table of contents work.", "Nested and numbered lists, tables, code blocks and links become real Word formatting.", "Images aren't embedded — a note marks where each one was."],
+  "word-to-md": ["Use the Pictures option to save images as separate files next to the Markdown (keep them in the same folder).", "Word styles like Heading 1–6 become # headings, and tables become Markdown tables.", "Complex layouts and text boxes are simplified — check the result before publishing."],
   "heic-to-jpg": ["iPhone photos in HEIC convert to standard JPG that opens everywhere.", "Drop a whole batch at once and download them as a ZIP."],
 };
 
@@ -29,6 +32,7 @@ const ABOUT: Record<string, string> = {
   security: "Protect, sign or clean sensitive PDFs — privately, on your device.",
   image: "Convert, shrink and resize images in bulk.",
   data: "Move data between spreadsheet and developer formats.",
+  markdown: "Move writing between Markdown, Word, PDF and HTML without losing its structure.",
 };
 
 export function helpFor(t: Tool): Help {

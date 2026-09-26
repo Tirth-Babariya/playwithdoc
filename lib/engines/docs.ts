@@ -291,7 +291,7 @@ async function block(w: Writer, el: Element) {
   } else await walk(w, el);
 }
 
-async function htmlToDoc(html: string, ctx: Ctx): Promise<Uint8Array> {
+export async function htmlToDoc(html: string, ctx: Ctx): Promise<Uint8Array> {
   const dom = new DOMParser().parseFromString(html, "text/html");
   const w = await Writer.create({ size: ctx.opts.size, margin: +ctx.opts.margin || 56, family: "sans" });
   await walk(w, dom.body);

@@ -72,6 +72,17 @@ export async function makeFixtures(browser) {
   await pdf("a.pdf", 3, "Doc A");
   await pdf("b.pdf", 2, "Doc B");
   await pdf("a-edited.pdf", 3, "Doc A", { 2: { 4: "Line 5: THIS LINE WAS EDITED in the new version." } });
+  fs.writeFileSync(path.join(FIXTURES, "notes.md"), [
+    "# Project Notes", "",
+    "Some **bold** text, some *italic* text and `inline code`. A [link](https://example.com).", "",
+    "## Checklist", "",
+    "- First item", "- Second item", "  - Nested item", "- [x] Done thing", "",
+    "1. Step one", "2. Step two", "",
+    "> A wise quote.", "",
+    "| Name | Qty |", "|------|----:|", "| Pen  | 12  |", "| Ink  | 3   |", "",
+    "```js", "const answer = 42;", "```", "",
+  ].join("\n"));
+  fs.writeFileSync(path.join(FIXTURES, "page.html"), '<html><head><style>p{color:red}</style><script>alert(1)</script></head><body><h1>Hello world</h1><p>Some <strong>bold</strong> text and a <a href="https://example.com/">site</a>.</p><ul><li>one</li><li>two</li></ul></body></html>');
   await formPdf("form.pdf");
   await tablePdf("table.pdf");
   await docx("report.docx");

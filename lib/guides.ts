@@ -432,6 +432,56 @@ export const GUIDES: Guide[] = [
     ],
     related: ["passport-photo-under-200kb", "signature-under-20kb", "reduce-pdf-size-under-200kb"],
   },
+  {
+    slug: "convert-markdown-to-pdf",
+    tool: "md-to-pdf",
+    title: "How to convert Markdown to PDF",
+    description: "Turn a .md file — a README, notes or documentation — into a clean PDF, free and without uploading it.",
+    minutes: 1,
+    intro: "Markdown is great for writing, but not everyone can open a .md file. A PDF works for everybody. Here’s the fastest way to make one, without installing anything.",
+    short: "Open Markdown to PDF, drop your .md file, and download the PDF. It starts automatically.",
+    steps: [
+      { title: "Open Markdown to PDF and add your file", body: "Drop one or several .md (or .markdown) files. Text is read on your device and never uploaded." },
+      { title: "Let it convert", body: "The PDF is made as soon as the file is added: headings, paragraphs, bold and italic, lists, quotes, code blocks and tables are laid out for you." },
+      { title: "Adjust the page if you need to", body: "Use Adjust settings to switch between A4 and US Letter or change the margins, then convert again." },
+      { title: "Download", body: "Save the PDF, or use “Keep going” to compress it, add a password or send it into Sign PDF." },
+    ],
+    tips: [
+      "Images and links to other pages aren’t included in the PDF, so include the important text in the document itself.",
+      "Want a document people can edit? Use Markdown to Word instead. Want a web page? Use Markdown to HTML.",
+      "Going the other way? PDF to Markdown pulls headings and lists out of a text PDF.",
+    ],
+    faq: [
+      { q: "Which Markdown features are supported?", a: "Headings, bold, italic, strikethrough, inline code, code blocks, block quotes, bulleted and numbered lists (including nested), task lists, tables and horizontal rules." },
+      PRIVATE_Q,
+    ],
+    related: ["convert-word-to-markdown", "convert-word-to-pdf", "reduce-pdf-size-under-200kb"],
+  },
+  {
+    slug: "convert-word-to-markdown",
+    tool: "word-to-md",
+    title: "How to convert a Word document to Markdown",
+    description: "Convert a .docx into clean Markdown — headings, lists, tables and links — and keep the pictures as separate files. Free and private.",
+    minutes: 2,
+    intro: "Moving a document from Word into a README, a wiki or a static site means converting it to Markdown. This does it in your browser, with the pictures saved alongside.",
+    short: "Open Word to Markdown, drop your .docx file, and download the .md file plus its images.",
+    steps: [
+      { title: "Open Word to Markdown and add your .docx", body: "Older .doc files need to be re-saved as .docx in Word first." },
+      { title: "Let it convert", body: "Word headings become # headings, lists become lists, tables become Markdown tables, and bold, italic and links are kept." },
+      { title: "Decide what happens to pictures", body: "By default each picture is saved as its own image file next to the Markdown. Use Adjust settings to leave pictures out or embed them inside the file." },
+      { title: "Download everything together", body: "If there are pictures, download all files as a ZIP and keep them in the same folder so the image links keep working." },
+    ],
+    tips: [
+      "Use Word’s built-in Heading styles before converting — they map cleanly to Markdown headings.",
+      "Complex layouts, text boxes and columns are simplified, so look over the result before publishing it.",
+      "Embedding pictures makes the Markdown file very large, because each image is stored as text.",
+    ],
+    faq: [
+      { q: "Do tables survive?", a: "Yes, as Markdown tables. Merged cells can’t be represented in Markdown, so those are flattened." },
+      PRIVATE_Q,
+    ],
+    related: ["convert-markdown-to-pdf", "convert-word-to-pdf", "convert-pdf-to-excel"],
+  },
 ];
 
 export const getGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);

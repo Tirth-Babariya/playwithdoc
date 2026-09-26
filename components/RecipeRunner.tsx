@@ -16,7 +16,7 @@ import { useToast } from "./Toast";
 const RECIPE_SLUGS = [
   "merge-pdf", "split-pdf", "compress-pdf", "repair-pdf", "ocr-pdf", "rotate-pdf", "add-page-numbers", "add-watermark", "crop-pdf", "protect-pdf", "unlock-pdf",
   "image-to-pdf", "word-to-pdf", "excel-to-pdf", "pptx-to-pdf", "html-to-pdf", "txt-to-pdf",
-  "pdf-to-jpg", "pdf-to-png", "pdf-to-word", "pdf-to-text", "pdf-to-excel", "pdf-to-pptx", "compress-image", "resize-image",
+  "md-to-pdf", "md-to-word", "word-to-md", "md-to-html", "html-to-md", "pdf-to-jpg", "pdf-to-png", "pdf-to-word", "pdf-to-text", "pdf-to-excel", "pdf-to-pptx", "compress-image", "resize-image",
 ];
 
 type Step = { id: string; slug: string; opts: Opts };

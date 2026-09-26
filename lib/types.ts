@@ -27,7 +27,7 @@ export type OptionSpec =
   | (Base & { type: "text"; placeholder?: string; default?: string; secret?: boolean })
   | (Base & { type: "number"; min?: number; max?: number; default: number; suffix?: string });
 
-export type Category = "organize" | "optimize" | "to-pdf" | "from-pdf" | "edit" | "security" | "image" | "data";
+export type Category = "organize" | "optimize" | "to-pdf" | "from-pdf" | "edit" | "security" | "image" | "data" | "markdown";
 
 export type Tool = {
   slug: string;
